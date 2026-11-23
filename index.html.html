@@ -1,0 +1,3040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Agenda Creativa — Love My Life (Edición Gatitos)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --desk: #efeae4;
+      --paper: #fcf9f2;
+      --paper-edge: #f3ede2;
+      --ink: #3a3532;
+      --ink-soft: #6f6761;
+      --line: #e4ddd0;
+      --blush: #e7d1ce;
+      --blush-dark: #c9a7a2;
+      --blush-light: #f6ebe9;
+      --shadow: 0 14px 34px rgba(58, 53, 50, 0.11);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 8px;
+    }
+
+    body {
+      font-family: 'Quicksand', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--desk);
+      background-image: radial-gradient(rgba(58, 53, 50, 0.055) 1px, transparent 1px);
+      background-size: 20px 20px;
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 28px;
+    }
+
+    .app-shell,
+    .topbar,
+    .format-bar,
+    .tabs-bar,
+    .notebook-wrap,
+    .notebook-cover,
+    .spread,
+    .spread > *,
+    .page,
+    .page > *,
+    .frame-card,
+    .cal-right-layout,
+    .cal-right-layout > *,
+    .cal-grid-left,
+    .cal-grid-right,
+    .cal-cell,
+    .day-card,
+    .weekend-grid,
+    .weekend-grid > *,
+    .habit-box,
+    .rich-area {
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .page svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .hand {
+      font-family: 'Patrick Hand', 'Comic Sans MS', cursive;
+    }
+
+    /* ==================== CONTENEDOR PRINCIPAL ==================== */
+    .app-shell {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==================== BARRA SUPERIOR ==================== */
+    .topbar {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px 10px;
+      background: rgba(252, 249, 242, 0.96);
+      border: 1.5px solid var(--line);
+      border-radius: 16px;
+      padding: clamp(8px, 1.4vw, 11px) clamp(10px, 1.8vw, 16px);
+      box-shadow: 0 5px 16px rgba(58, 53, 50, 0.06);
+      margin-bottom: 8px;
+    }
+
+    .ctrl-select,
+    .ctrl-btn {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.74rem, 1.1vw, 0.82rem);
+      color: var(--ink);
+      background: #ffffff;
+      border: 1.5px solid var(--ink);
+      border-radius: 10px;
+      padding: 5px 9px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.12s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .ctrl-select:hover,
+    .ctrl-btn:hover {
+      background: var(--blush-light);
+      transform: translateY(-1px);
+    }
+
+    .ctrl-btn.today-btn {
+      background: var(--blush-light);
+      border-color: var(--blush-dark);
+    }
+
+    .ctrl-btn.today-btn:hover {
+      background: var(--blush);
+    }
+
+    .ctrl-btn.layout-active {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .save-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--ink-soft);
+      background: var(--blush-light);
+      border: 1px solid var(--blush);
+      border-radius: 999px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+
+    /* ==================== BARRA STICKY DE FORMATO ==================== */
+    .format-bar {
+      position: sticky;
+      top: 6px;
+      z-index: 40;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px 10px;
+      background: rgba(252, 249, 242, 0.98);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid var(--blush-dark);
+      border-radius: 14px;
+      padding: 7px 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 6px 18px rgba(58, 53, 50, 0.07);
+    }
+
+    .fmt-section {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .fmt-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-right: 2px;
+      user-select: none;
+    }
+
+    .fmt-sep {
+      width: 1.5px;
+      height: 20px;
+      background: var(--line);
+      margin: 0 1px;
+      flex-shrink: 0;
+    }
+
+    .fmt-btn {
+      min-width: 28px;
+      height: 28px;
+      padding: 0 7px;
+      border-radius: 8px;
+      border: 1.4px solid var(--ink);
+      background: #ffffff;
+      color: var(--ink);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: background-color 0.14s ease, transform 0.12s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .fmt-btn:hover {
+      background: var(--blush-light);
+      transform: translateY(-1px);
+    }
+
+    .fmt-btn.task-pill {
+      background: var(--blush-light);
+      border-color: var(--ink);
+      padding: 0 10px;
+    }
+
+    .fmt-btn.task-pill:hover {
+      background: var(--blush);
+    }
+
+    .text-color-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1.2px solid var(--line);
+      background: #ffffff;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      padding: 0;
+      transition: transform 0.14s ease, border-color 0.14s ease, background-color 0.14s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .text-color-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--ink);
+      background: var(--blush-light);
+    }
+
+    .text-color-btn span.u-bar {
+      width: 13px;
+      height: 2.5px;
+      border-radius: 2px;
+      margin-top: 2px;
+      display: block;
+    }
+
+    .hl-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1.5px solid var(--ink);
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.14s ease;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .hl-circle:hover {
+      transform: scale(1.14);
+    }
+
+    .hl-circle.hl-clear {
+      background: #ffffff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hl-circle.hl-clear::after {
+      content: "";
+      position: absolute;
+      width: 26px;
+      height: 1.8px;
+      background: #c93b3b;
+      transform: rotate(-45deg);
+    }
+
+    /* ==================== PESTAÑAS TIPO CUADERNO ==================== */
+    .tabs-bar {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 14px;
+      margin-bottom: -2px;
+      position: relative;
+      z-index: 5;
+    }
+
+    .tab-btn {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.74rem, 1.1vw, 0.82rem);
+      padding: 8px 14px;
+      border: 1.5px solid var(--line);
+      border-bottom: none;
+      border-radius: 13px 13px 0 0;
+      background: var(--paper-edge);
+      color: var(--ink-soft);
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: var(--blush-light);
+      color: var(--ink);
+      border-color: var(--blush-dark);
+    }
+
+    .tab-btn.active {
+      background: var(--paper);
+      color: var(--ink);
+      border: 1.8px solid var(--ink);
+      border-bottom: 2px solid var(--paper);
+      padding-bottom: 10px;
+      transform: translateY(1px);
+    }
+
+    /* ==================== CUADERNO ABIERTO FLUIDO ==================== */
+    .notebook-wrap {
+      position: relative;
+      width: 100%;
+    }
+
+    .notebook-cover {
+      width: 100%;
+      background: var(--blush);
+      padding: clamp(6px, 1.2vw, 12px);
+      border-radius: clamp(14px, 2vw, 22px);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(58, 53, 50, 0.09);
+    }
+
+    .spread {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      background: var(--paper);
+      border-radius: 13px;
+      min-height: clamp(560px, 74vh, 690px);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #e5ddd0;
+    }
+
+    .spread::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 24px;
+      transform: translateX(-50%);
+      background: linear-gradient(
+        90deg,
+        rgba(58, 53, 50, 0) 0%,
+        rgba(58, 53, 50, 0.05) 45%,
+        rgba(58, 53, 50, 0.10) 50%,
+        rgba(58, 53, 50, 0.045) 55%,
+        rgba(58, 53, 50, 0) 100%
+      );
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .page {
+      padding: clamp(14px, 2.2vw, 26px) clamp(14px, 2.4vw, 28px);
+      display: flex;
+      flex-direction: column;
+      min-height: clamp(560px, 74vh, 690px);
+      position: relative;
+    }
+
+    .page-left {
+      padding-right: clamp(16px, 2.6vw, 32px);
+    }
+
+    .page-right {
+      padding-left: clamp(16px, 2.6vw, 32px);
+    }
+
+    .spread.single-page {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: auto;
+    }
+
+    .spread.single-page::after {
+      display: none;
+    }
+
+    .spread.single-page .page {
+      min-height: auto;
+      padding: clamp(16px, 2.8vw, 26px);
+    }
+
+    .spread.single-page .page-left {
+      border-bottom: 2px dashed var(--line);
+    }
+
+    /* ==================== CAMPOS RICH-TEXT EDITABLES ==================== */
+    .rich-area {
+      width: 100%;
+      outline: none;
+      font-family: 'Patrick Hand', cursive;
+      color: var(--ink);
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      cursor: text;
+    }
+
+    .rich-area:empty::before {
+      content: attr(data-placeholder);
+      color: #a9a098;
+      pointer-events: none;
+    }
+
+    .rich-ruled {
+      flex: 1;
+      font-size: clamp(0.95rem, 1.3vw, 1.06rem);
+      line-height: 26px;
+      padding: 2px 5px;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 25px,
+        var(--line) 25px,
+        var(--line) 26px
+      );
+      min-height: 96px;
+    }
+
+    .rich-compact {
+      flex: 1;
+      font-size: clamp(0.8rem, 1.05vw, 0.92rem);
+      line-height: 1.28;
+      padding: 2px 2px;
+      min-height: 44px;
+    }
+
+    /* ==================== CASILLAS INTERACTIVAS DENTRO DEL TEXTO ==================== */
+    .inline-todo {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin: 2px 0;
+      line-height: 1.35;
+    }
+
+    .inline-cb {
+      width: 15px;
+      height: 15px;
+      min-width: 15px;
+      margin-top: 4px;
+      border: 1.6px solid var(--ink);
+      border-radius: 4px;
+      background: #ffffff;
+      color: var(--paper);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: background-color 0.14s ease;
+    }
+
+    .inline-cb:hover {
+      background: var(--blush-light);
+    }
+
+    .inline-todo.done .inline-cb {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .inline-todo-text {
+      flex: 1;
+      min-width: 20px;
+      outline: none;
+    }
+
+    .inline-todo.done .inline-todo-text {
+      text-decoration: line-through;
+      text-decoration-thickness: 1.6px;
+      color: var(--ink-soft);
+      opacity: 0.8;
+    }
+
+    /* ==================== ESTILOS DE TARJETAS Y MARCOS ==================== */
+    .frame-card {
+      border: 1.6px solid var(--ink);
+      border-radius: 13px;
+      padding: clamp(10px, 1.5vw, 15px);
+      background: rgba(255, 255, 255, 0.35);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .frame-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      border-bottom: 1.4px solid var(--ink);
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      font-size: clamp(0.72rem, 1.05vw, 0.82rem);
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .love-card {
+      background: var(--blush);
+      border: 1.4px solid var(--blush-dark);
+      border-radius: 10px;
+      padding: clamp(12px, 1.8vw, 16px);
+      width: 100%;
+      max-width: 340px;
+      box-shadow: 0 5px 12px rgba(58, 53, 50, 0.08);
+      transform: rotate(-0.6deg);
+    }
+
+    .today-pill {
+      display: inline-block;
+      background: var(--blush);
+      color: var(--ink);
+      border: 1px solid var(--blush-dark);
+      border-radius: 999px;
+      padding: 1px 6px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .quick-month-btn {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.72rem, 1vw, 0.8rem);
+      letter-spacing: 0.05em;
+      padding: 9px 6px;
+      background: transparent;
+      border: 1.5px solid var(--ink);
+      border-radius: 11px;
+      cursor: pointer;
+      color: var(--ink);
+      transition: background-color 0.15s ease, transform 0.12s ease;
+    }
+
+    .quick-month-btn:hover,
+    .quick-month-btn.current {
+      background: var(--blush-light);
+      transform: translateY(-1px);
+    }
+
+    .mood-btn {
+      border: 1.5px solid var(--line);
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: transform 0.14s ease, background-color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .mood-btn.selected {
+      border-color: var(--ink);
+      background: var(--blush-light);
+      transform: scale(1.1);
+    }
+
+    .note-pill {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1.4px solid var(--ink);
+      background: transparent;
+      cursor: pointer;
+      color: var(--ink);
+      transition: background-color 0.14s ease, color 0.14s ease;
+    }
+
+    .note-pill.active {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    /* ==================== CALENDARIO MENSUAL FLUIDO ==================== */
+    .cal-right-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 1.25fr);
+      gap: 10px;
+      flex: 1;
+    }
+
+    .cal-grid-left,
+    .cal-grid-right {
+      display: grid;
+      flex: 1;
+      border-top: 1.5px solid var(--ink);
+      border-left: 1px solid var(--line);
+    }
+
+    .cal-grid-left {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .cal-grid-right {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .cal-head-cell {
+      background: var(--ink);
+      color: var(--paper);
+      font-size: clamp(0.62rem, 0.95vw, 0.72rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 26px;
+    }
+
+    .cal-cell {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 3px 4px;
+      display: flex;
+      flex-direction: column;
+      min-height: clamp(64px, 8.8vw, 82px);
+    }
+
+    .cal-cell.empty {
+      background: rgba(58, 53, 50, 0.025);
+    }
+
+    .cal-cell.is-today {
+      background: var(--blush-light);
+      box-shadow: inset 0 0 0 1.6px var(--blush-dark);
+    }
+
+    /* ==================== VISTA SEMANAL Y TABLA DE HÁBITOS FIJA ==================== */
+    .weekly-quote-strip {
+      background: var(--blush-light);
+      border: 1.4px dashed var(--blush-dark);
+      border-radius: 12px;
+      padding: 6px 11px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .weekly-page {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .day-card {
+      border: 1.6px solid var(--ink);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      flex: 1 0 auto;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.35);
+      min-height: 148px;
+    }
+
+    .day-card .rich-ruled {
+      padding: 4px 10px;
+      min-height: 108px;
+    }
+
+    .day-card.is-today {
+      border-color: var(--blush-dark);
+      box-shadow: 0 0 0 2px var(--blush-dark);
+    }
+
+    .day-card-head {
+      padding: 6px 12px;
+      border-bottom: 1.3px solid var(--ink);
+      font-size: clamp(0.7rem, 1vw, 0.78rem);
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      background: rgba(246, 235, 233, 0.45);
+    }
+
+    .day-card-head.weekend {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .weekend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      flex: 1 0 auto;
+    }
+
+    .habit-box {
+      border: 1.6px solid var(--ink);
+      border-radius: 12px;
+      padding: 9px 10px;
+      background: rgba(246, 235, 233, 0.42);
+      flex-shrink: 0;
+    }
+
+    .habit-table {
+      width: 100%;
+      table-layout: fixed;
+      border-collapse: collapse;
+    }
+
+    .habit-table col.col-name {
+      width: auto;
+    }
+
+    .habit-table col.col-day {
+      width: 22px;
+    }
+
+    .habit-table col.col-del {
+      width: 18px;
+    }
+
+    .habit-table th {
+      font-size: 0.64rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+      text-align: center;
+      padding: 3px 0 4px;
+      border-bottom: 1px solid var(--blush-dark);
+    }
+
+    .habit-table th.col-name-th {
+      text-align: left;
+      padding-left: 2px;
+    }
+
+    .habit-table td {
+      padding: 4px 1px;
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .habit-table td.col-name-td {
+      text-align: left;
+      padding-right: 4px;
+    }
+
+    .habit-table th.is-today-col,
+    .habit-table td.is-today-col {
+      background: var(--blush);
+      color: var(--ink);
+    }
+
+    .habit-table th.is-today-col {
+      border-radius: 5px 5px 0 0;
+      font-weight: 800;
+    }
+
+    .habit-cb {
+      width: 17px;
+      height: 17px;
+      border: 1.4px solid var(--ink);
+      border-radius: 4px;
+      background: #ffffff;
+      color: var(--paper);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0;
+      margin: 0 auto;
+    }
+
+    .habit-cb.checked {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .habit-name-input {
+      width: 100%;
+      min-width: 0;
+      border: none;
+      border-bottom: 1px dashed var(--blush-dark);
+      background: transparent;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 0.94rem;
+      color: var(--ink);
+      outline: none;
+      padding: 1px 2px;
+      text-overflow: ellipsis;
+    }
+
+    /* ==================== TO-DO LIST ==================== */
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 6px 4px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .todo-cb {
+      width: 19px;
+      height: 19px;
+      min-width: 19px;
+      border: 1.6px solid var(--ink);
+      border-radius: 5px;
+      background: #ffffff;
+      color: var(--paper);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .todo-item.done .todo-cb {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .todo-item.done .todo-label {
+      text-decoration: line-through;
+      color: var(--ink-soft);
+    }
+
+    /* ==================== PORTADA DEL MES ==================== */
+    .mc-page-left,
+    .mc-page-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .mc-top-row {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .mc-quote {
+      font-size: 0.78rem;
+      line-height: 1.5;
+      color: var(--ink-soft);
+      margin: 0;
+      max-width: 220px;
+    }
+
+    .mc-quote-right {
+      text-align: right;
+    }
+
+    .mc-hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 10px;
+      margin: auto 0;
+    }
+
+    .mc-word {
+      font-family: 'Patrick Hand', cursive;
+      font-size: clamp(1.95rem, 3.2vw, 2.55rem);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+      border-bottom: 2.2px solid var(--ink);
+      padding: 0 14px 2px;
+      line-height: 1.15;
+    }
+
+    .mc-hero-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 0;
+    }
+
+    .mc-footer-right {
+      width: 100%;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      border-top: 1.4px dashed var(--line);
+      padding-top: 12px;
+    }
+
+    .mc-month-title {
+      font-size: clamp(1.1rem, 1.9vw, 1.4rem);
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    /* ==================== ¿CÓMO FUE TU MES? ==================== */
+    .rev-page {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .rev-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border: 1.6px solid var(--ink);
+      border-radius: 14px;
+      padding: 8px 14px;
+      font-size: clamp(0.76rem, 1.1vw, 0.88rem);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(246, 235, 233, 0.45);
+    }
+
+    .rev-main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+      gap: 12px;
+      flex: 1;
+    }
+
+    .rev-left-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .rev-summary-card {
+      border: 1.6px solid var(--ink);
+      border-radius: 13px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .rev-fav-card {
+      border: 1.6px solid var(--ink);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.4);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .rev-fav-banner {
+      background: var(--ink);
+      color: var(--paper);
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 8px;
+    }
+
+    .rev-fav-row {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 7px 11px;
+      border-bottom: 1px solid var(--line);
+      min-height: 66px;
+    }
+
+    .rev-fav-row:last-child {
+      border-bottom: none;
+    }
+
+    .rev-sublabel {
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 3px;
+    }
+
+    .rev-cat-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 2px;
+    }
+
+    .rev-mood-card {
+      border: 1.6px solid var(--ink);
+      border-radius: 13px;
+      padding: 12px 14px;
+      background: rgba(246, 235, 233, 0.32);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rev-mood-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ==================== NOTAS ==================== */
+    .notes-page-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      gap: 18px;
+    }
+
+    .notes-top-quotes {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .notes-center-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: auto 0;
+      gap: 8px;
+    }
+
+    .notes-sheet-card {
+      border: 1.6px solid var(--ink);
+      border-radius: 16px;
+      padding: clamp(16px, 2.2vw, 22px);
+      background: rgba(255, 255, 255, 0.35);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .notes-sheet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    .notes-sheet-title {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .notes-ruled {
+      flex: 1;
+      font-size: clamp(1.04rem, 1.35vw, 1.16rem);
+      line-height: 30px;
+      padding: 2px 4px;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 29px,
+        var(--line) 29px,
+        var(--line) 30px
+      );
+      min-height: 440px;
+    }
+
+    .notes-ruled .inline-todo {
+      margin: 0;
+      line-height: 30px;
+      gap: 8px;
+    }
+
+    .notes-ruled .inline-cb {
+      margin-top: 7px;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      border-radius: 4px;
+    }
+
+    /* ==================== TOAST ==================== */
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--ink);
+      color: var(--paper);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(58, 53, 50, 0.24);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ==================== MODAL DE SINCRONIZACIÓN EN LA NUBE ==================== */
+    .cloud-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(58, 53, 50, 0.42);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 90;
+    }
+
+    .cloud-modal-backdrop.open {
+      display: flex;
+    }
+
+    .cloud-modal {
+      width: 100%;
+      max-width: 440px;
+      background: var(--paper);
+      border: 1.8px solid var(--ink);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 20px 48px rgba(58, 53, 50, 0.24);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .cloud-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.4px solid var(--line);
+      padding-bottom: 10px;
+    }
+
+    .cloud-status-box {
+      background: var(--blush-light);
+      border: 1.3px solid var(--blush-dark);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+
+    .cloud-input {
+      width: 100%;
+      border: 1.5px solid var(--ink);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      background: #ffffff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .cloud-input:focus {
+      box-shadow: 0 0 0 2px var(--blush-dark);
+    }
+
+    /* ==================== ADAPTACIÓN PARA NOTION Y MÓVIL ==================== */
+    @media (max-width: 840px) {
+      .cal-right-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .habit-table col.col-day {
+        width: 19px;
+      }
+      .habit-cb {
+        width: 15px;
+        height: 15px;
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .spread {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: auto;
+      }
+      .spread::after {
+        display: none;
+      }
+      .page {
+        padding: 16px 14px;
+        min-height: auto;
+      }
+      .page-left {
+        padding-right: 14px;
+        border-bottom: 2px dashed var(--line);
+      }
+      .page-right {
+        padding-left: 14px;
+      }
+      .weekend-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .rev-main-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .fmt-sep {
+        display: none;
+      }
+    }
+
+    @media print {
+      html, body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .topbar, .format-bar, .tabs-bar, .no-print, .toast {
+        display: none !important;
+      }
+      .notebook-cover {
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        border: none;
+      }
+      .spread {
+        border: 1px solid #d8d0c4;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- BARRA SUPERIOR -->
+    <header class="topbar">
+      <div class="flex items-center gap-2.5">
+        <svg width="32" height="32" viewBox="0 0 64 64" fill="none" stroke="#3a3532" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M16 44 C14 30, 18 22, 22 16 L27 23 C30 22, 34 22, 37 23 L42 16 C46 22, 50 30, 48 44 C46 52, 18 52, 16 44 Z"/>
+          <circle cx="26" cy="34" r="4"/>
+          <circle cx="38" cy="34" r="4"/>
+          <path d="M30 34 L34 34"/>
+          <path d="M30 40 Q32 42 34 40"/>
+          <path d="M12 36 L19 37 M12 41 L19 40 M52 36 L45 37 M52 41 L45 40"/>
+        </svg>
+        <div class="flex flex-col">
+          <span class="font-bold text-xs sm:text-sm tracking-widest uppercase leading-tight">Mi Agenda Creativa</span>
+          <div class="text-xs leading-tight" style="color: var(--ink-soft);">Love My Life · Edición Gatitos</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-1.5">
+        <button type="button" id="btnToday" class="ctrl-btn today-btn" title="Ir a la fecha actual">📍 Hoy</button>
+        <select id="monthSelect" class="ctrl-select" aria-label="Seleccionar mes"></select>
+        <select id="yearSelect" class="ctrl-select" aria-label="Seleccionar año">
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+          <option value="2027">2027</option>
+          <option value="2028">2028</option>
+        </select>
+        <button type="button" id="btnLayout" class="ctrl-btn" title="Alternar entre vista de 2 páginas y 1 página">📖 2 pág</button>
+        <button type="button" id="btnPrint" class="ctrl-btn" title="Imprimir o guardar en PDF">🖨️ PDF</button>
+        <button type="button" id="btnExport" class="ctrl-btn" title="Exportar respaldo JSON">💾 Exportar</button>
+        <button type="button" id="btnImport" class="ctrl-btn" title="Importar respaldo JSON">📂 Importar</button>
+        <button type="button" id="btnCloud" class="ctrl-btn today-btn" title="Sincronizar entre dispositivos">☁️ Nube</button>
+        <input type="file" id="importFile" accept=".json,application/json" class="hidden" />
+        <span id="saveStatus" class="save-pill">Guardado ✓</span>
+      </div>
+    </header>
+
+    <!-- BARRA STICKY DE FORMATO -->
+    <div id="formatBar" class="format-bar no-print" role="toolbar" aria-label="Barra de formato de texto">
+      <div class="fmt-section">
+        <button type="button" class="fmt-btn" data-cmd="bold" onmousedown="event.preventDefault()" title="Negrita"><strong>B</strong></button>
+        <button type="button" class="fmt-btn" data-cmd="italic" onmousedown="event.preventDefault()" title="Cursiva"><em>I</em></button>
+        <button type="button" class="fmt-btn" data-cmd="strikeThrough" onmousedown="event.preventDefault()" title="Tachar texto"><s>S</s></button>
+      </div>
+
+      <span class="fmt-sep" aria-hidden="true"></span>
+
+      <div class="fmt-section">
+        <button type="button" class="fmt-btn task-pill" data-cmd="insertTodo" onmousedown="event.preventDefault()" title="Insertar casilla de tarea interactiva donde está el cursor">☑ Tarea</button>
+      </div>
+
+      <span class="fmt-sep" aria-hidden="true"></span>
+
+      <div class="fmt-section">
+        <span class="fmt-label">Texto:</span>
+        <button type="button" class="text-color-btn" data-forecolor="#3a3532" onmousedown="event.preventDefault()" style="color:#3a3532;" title="Grafito" aria-label="Texto grafito">A<span class="u-bar" style="background:#3a3532;"></span></button>
+        <button type="button" class="text-color-btn" data-forecolor="#c93b3b" onmousedown="event.preventDefault()" style="color:#c93b3b;" title="Rojo" aria-label="Texto rojo">A<span class="u-bar" style="background:#c93b3b;"></span></button>
+        <button type="button" class="text-color-btn" data-forecolor="#c95484" onmousedown="event.preventDefault()" style="color:#c95484;" title="Rosa" aria-label="Texto rosa">A<span class="u-bar" style="background:#c95484;"></span></button>
+        <button type="button" class="text-color-btn" data-forecolor="#2b6cb0" onmousedown="event.preventDefault()" style="color:#2b6cb0;" title="Azul" aria-label="Texto azul">A<span class="u-bar" style="background:#2b6cb0;"></span></button>
+        <button type="button" class="text-color-btn" data-forecolor="#d97724" onmousedown="event.preventDefault()" style="color:#d97724;" title="Naranja" aria-label="Texto naranja">A<span class="u-bar" style="background:#d97724;"></span></button>
+        <button type="button" class="text-color-btn" data-forecolor="#2f855a" onmousedown="event.preventDefault()" style="color:#2f855a;" title="Verde" aria-label="Texto verde">A<span class="u-bar" style="background:#2f855a;"></span></button>
+        <button type="button" class="text-color-btn" data-forecolor="#6b46c1" onmousedown="event.preventDefault()" style="color:#6b46c1;" title="Morado" aria-label="Texto morado">A<span class="u-bar" style="background:#6b46c1;"></span></button>
+      </div>
+
+      <span class="fmt-sep" aria-hidden="true"></span>
+
+      <div class="fmt-section">
+        <span class="text-sm select-none" aria-hidden="true" title="Resaltar">🖍️</span>
+        <button type="button" class="hl-circle" data-hilite="#fef08a" onmousedown="event.preventDefault()" style="background:#fef08a;" title="Resaltar amarillo pastel" aria-label="Amarillo pastel"></button>
+        <button type="button" class="hl-circle" data-hilite="#fbcfe8" onmousedown="event.preventDefault()" style="background:#fbcfe8;" title="Resaltar rosa pastel" aria-label="Rosa pastel"></button>
+        <button type="button" class="hl-circle" data-hilite="#bae6fd" onmousedown="event.preventDefault()" style="background:#bae6fd;" title="Resaltar celeste pastel" aria-label="Celeste pastel"></button>
+        <button type="button" class="hl-circle" data-hilite="#bbf7d0" onmousedown="event.preventDefault()" style="background:#bbf7d0;" title="Resaltar verde pastel" aria-label="Verde pastel"></button>
+        <button type="button" class="hl-circle" data-hilite="#fed7aa" onmousedown="event.preventDefault()" style="background:#fed7aa;" title="Resaltar naranja pastel" aria-label="Naranja pastel"></button>
+        <button type="button" class="hl-circle hl-clear" data-hilite="transparent" onmousedown="event.preventDefault()" title="Quitar resaltado" aria-label="Quitar resaltado"></button>
+        <span class="fmt-sep" aria-hidden="true"></span>
+        <button type="button" class="fmt-btn" data-cmd="clearFormat" onmousedown="event.preventDefault()" title="Limpiar formato">🧹</button>
+      </div>
+    </div>
+
+    <!-- PESTAÑAS DE LAS 7 SECCIONES -->
+    <nav id="tabsBar" class="tabs-bar" aria-label="Secciones de la agenda">
+      <button type="button" class="tab-btn active" data-view="cover">✨ Portada</button>
+      <button type="button" class="tab-btn" data-view="monthCover">🐱 Mes</button>
+      <button type="button" class="tab-btn" data-view="monthly">📅 Mensual</button>
+      <button type="button" class="tab-btn" data-view="weekly">📝 Semanal</button>
+      <button type="button" class="tab-btn" data-view="todo">☑️ To-Do & Notas</button>
+      <button type="button" class="tab-btn" data-view="review">💛 ¿Cómo fue tu mes?</button>
+      <button type="button" class="tab-btn" data-view="notes">📖 Notas</button>
+    </nav>
+
+    <!-- CUADERNO ABIERTO -->
+    <main class="notebook-wrap">
+      <div class="notebook-cover">
+        <div id="spread" class="spread"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal de sincronización en la nube -->
+  <div id="cloudModal" class="cloud-modal-backdrop no-print" role="dialog" aria-modal="true" aria-labelledby="cloudModalTitle">
+    <div class="cloud-modal">
+      <div class="cloud-modal-head">
+        <h2 id="cloudModalTitle" class="font-bold text-sm tracking-wider uppercase">☁️ Sincronización en la nube</h2>
+        <button type="button" id="closeCloudModal" class="bg-transparent border-0 cursor-pointer text-base font-bold" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="cloud-status-box">
+        <div id="cloudModeText" class="font-bold">Conectando con tu espacio en la nube...</div>
+        <div class="text-xs mt-1 break-all" style="color: var(--ink-soft);">
+          ID de sesión: <span id="cloudUserId" class="font-semibold">...</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <label for="syncCodeInput" class="text-xs font-bold uppercase tracking-wider" style="color: var(--ink-soft);">
+          Código personal para sincronizar dispositivos
+        </label>
+        <p class="text-xs leading-relaxed" style="color: var(--ink-soft);">
+          Escribe una clave secreta (por ejemplo: <strong>mi-agenda-rosa-2026</strong>) y úsala en tu iPad, celular, computadora o Notion para ver los mismos cambios al instante.
+        </p>
+        <input type="text" id="syncCodeInput" class="cloud-input" placeholder="Ej: mi-agenda-rosa-2026" autocomplete="off" />
+        <div class="flex flex-wrap gap-2 mt-1">
+          <button type="button" id="btnConnectCode" class="ctrl-btn today-btn">🔗 Conectar código</button>
+          <button type="button" id="btnCopyCode" class="ctrl-btn">📋 Copiar código</button>
+          <button type="button" id="btnPrivateSpace" class="ctrl-btn">🔒 Espacio privado</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast no bloqueante -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+    import {
+      initializeAuth,
+      indexedDBLocalPersistence,
+      browserLocalPersistence,
+      inMemoryPersistence,
+      signInAnonymously,
+      signInWithCustomToken
+    } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+    import { initializeFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+    // =========================================================================
+    // CONFIGURACIÓN DE FIREBASE
+    // =========================================================================
+    const MI_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyCmCkaIdXlwg0DDY7ckT1SXfLUxfWaPbCA",
+      authDomain: "mi-agenda-creativa.firebaseapp.com",
+      projectId: "mi-agenda-creativa",
+      storageBucket: "mi-agenda-creativa.firebasestorage.app",
+      messagingSenderId: "134677575958",
+      appId: "1:134677575958:web:8acfa004bf0f0f62543837"
+    };
+    // =========================================================================
+
+    (function () {
+      'use strict';
+
+      // ==================== CONSTANTES Y CATÁLOGOS ====================
+      const STORAGE_KEY = 'agenda_creativa_isadora_v2';
+      const SYNC_CODE_KEY = 'agenda_creativa_sync_code_v1';
+      const HABIT_DAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+      const CLIENT_ID = 'cli_' + Math.random().toString(36).slice(2, 10);
+      const appId = typeof __app_id !== 'undefined' ? __app_id : 'mi-agenda-creativa';
+
+      const MONTHS = [
+        { num: '01', name: 'ENERO', short: 'Ene', word: 'RELAX', q1: 'Los días se sienten más largos. Nada es urgente, el tiempo fluye despacio.', q2: 'Tardes tranquilas. Descansar se siente natural.', doodle: 'relax' },
+        { num: '02', name: 'FEBRERO', short: 'Feb', word: 'CREATE', q1: 'Pequeñas ideas que se convierten en momentos favoritos.', q2: 'Disfruta el proceso sin apuro.', doodle: 'coffee' },
+        { num: '03', name: 'MARZO', short: 'Mar', word: 'FLOW', q1: 'Un paso a la vez, con calma y claridad.', q2: 'Menos ruido, más intención.', doodle: 'book' },
+        { num: '04', name: 'ABRIL', short: 'Abr', word: 'FOCUS', q1: 'La atención cambia cómo se sienten las cosas. Una tarea, un pensamiento a la vez.', q2: 'Menos ruido, más dirección. El enfoque se siente sereno.', doodle: 'coffee' },
+        { num: '05', name: 'MAYO', short: 'May', word: 'COZY', q1: 'Un café tibio, una mañana tranquila, una página escrita sin prisa.', q2: 'Un momento solo para mí.', doodle: 'relax' },
+        { num: '06', name: 'JUNIO', short: 'Jun', word: 'DREAM', q1: 'Espacio para lo que vive en mi mente: planes, sueños y pequeñas metas.', q2: 'Todo lo bueno toma su tiempo.', doodle: 'book' },
+        { num: '07', name: 'JULIO', short: 'Jul', word: 'PAUSE', q1: 'Respirar hondo también es avanzar.', q2: 'Celebra lo que ya lograste este año.', doodle: 'relax' },
+        { num: '08', name: 'AGOSTO', short: 'Ago', word: 'BLOOM', q1: 'Nuevos hábitos, nuevas energías y hojas en blanco.', q2: 'Confía en tu ritmo.', doodle: 'coffee' },
+        { num: '09', name: 'SEPTIEMBRE', short: 'Sep', word: 'SHINE', q1: 'Primavera en el ánimo y luz en los pequeños detalles.', q2: 'Agradece lo cotidiano.', doodle: 'relax' },
+        { num: '10', name: 'OCTUBRE', short: 'Oct', word: 'INSPIRE', q1: 'Curiosidad, libros, música y ganas de crear.', q2: 'Hazlo con cariño.', doodle: 'book' },
+        { num: '11', name: 'NOVIEMBRE', short: 'Nov', word: 'GRATEFUL', q1: 'Encontrar sentido en las pequeñas cosas que dan forma a mi día.', q2: 'Sin presión, con presencia.', doodle: 'coffee' },
+        { num: '12', name: 'DICIEMBRE', short: 'Dic', word: 'CELEBRATE', q1: 'Cerrar el año con orgullo, calma y lindos recuerdos.', q2: 'Lo hiciste increíble.', doodle: 'relax' }
+      ];
+
+      const WEEKLY_QUOTES = [
+        'Un paso pequeño cada día construye semanas hermosas.',
+        'Menos prisa, más presencia en lo que importa hoy.',
+        'Un café tibio, una lista clara y calma para empezar.',
+        'No tienes que hacerlo todo hoy; solo lo que suma paz.',
+        'Disfruta las pequeñas cosas que dan forma a tu día.',
+        'Tu ritmo también es válido. Respira y sigue adelante.',
+        'Hacer espacio para descansar también es productividad.',
+        'Esta semana elige claridad sobre perfección.',
+        'Cada pequeña tarea terminada merece celebrarse.',
+        'Ordenar tus ideas en papel ordena también tu mente.',
+        'Guarda un ratito de la semana solo para ti.',
+        'Lo constante y suave llega más lejos que lo apresurado.',
+        'Agradece lo que ya tienes mientras construyes lo que sueñas.',
+        'Una página en blanco siempre es una buena oportunidad.',
+        'Hazlo con cariño y sin presión innecesaria.',
+        'Pequeños hábitos, grandes cambios silenciosos.',
+        'Hoy enfócate en una cosa a la vez.',
+        'Deja espacio para lo inesperado y lo bonito.',
+        'Tu energía es valiosa: inviértela en lo que te hace bien.',
+        'Celebra el progreso, aunque hoy sea pequeñito.',
+        'Una semana serena empieza con expectativas amables.',
+        'Confía en el proceso; todo florece a su tiempo.',
+        'Haz de lo cotidiano tu momento favorito del día.',
+        'Respira hondo: lo estás haciendo mejor de lo que crees.',
+        'Escribe tus sueños para recordar hacia dónde vas.',
+        'Menos ruido, más dirección y disfrute.',
+        'Date permiso para pausar y recargar energías.',
+        'Cada lunes trae aire fresco y nuevas posibilidades.',
+        'Cuida tu paz como tu tarea más importante.',
+        'Love my life: coleccionando momentos sencillos y reales.'
+      ];
+
+      // Ilustraciones SVG originales de gatitos dibujados a mano
+      const SVGS = {
+        relax: `
+          <svg width="240" height="200" viewBox="0 0 260 220" fill="none" stroke="#3a3532" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="88" cy="40" r="14"/>
+            <path d="M88 16 V21 M88 59 V64 M64 40 H69 M107 40 H112 M71 23 L75 27 M101 53 L105 57 M105 23 L101 27 M75 53 L71 57"/>
+            <path d="M55 162 L185 186 M168 183 L204 118 M102 170 L88 186 M152 180 L166 196"/>
+            <path d="M82 145 C74 128, 92 110, 120 112 C132 100, 146 92, 162 94 L167 82 L175 94 C182 96, 187 101, 189 109 L198 103 L194 117 C200 130, 194 156, 174 168 C154 179, 102 172, 82 145 Z"/>
+            <path d="M164 106 L176 109 L174 116 C170 118, 163 115, 164 106 Z" fill="#3a3532"/>
+            <path d="M180 110 L192 113 L190 120 C185 121, 179 118, 180 110 Z" fill="#3a3532"/>
+            <path d="M176 109 L180 110"/>
+            <path d="M173 121 Q177 124 181 122"/>
+            <path d="M196 119 L212 122 M195 125 L210 130"/>
+            <path d="M126 115 C118 102, 122 92, 132 95 C139 98, 138 112, 134 118"/>
+            <path d="M114 82 L134 86 L122 98 Z"/>
+            <path d="M122 98 L119 108 M113 107 L125 109"/>
+            <path d="M90 144 C78 140, 74 152, 86 156"/>
+            <path d="M80 149 C62 154, 52 142, 60 134"/>
+          </svg>
+        `,
+        coffee: `
+          <svg width="240" height="175" viewBox="0 0 270 200" fill="none" stroke="#3a3532" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M36 128 C20 124, 18 106, 36 104 C50 102, 54 116, 48 124"/>
+            <path d="M46 116 C64 96, 108 92, 138 96 C146 84, 158 76, 172 78 L178 65 L186 78 C194 79, 200 84, 203 91 L214 85 L208 99 C213 114, 204 134, 184 140 C162 146, 132 144, 108 140 C92 146, 68 144, 58 134"/>
+            <path d="M174 96 Q178 93 182 96"/>
+            <path d="M190 98 Q194 95 198 98"/>
+            <path d="M183 103 Q186 106 189 103"/>
+            <path d="M210 99 L224 98 M210 106 L224 108"/>
+            <rect x="148" y="102" width="24" height="22" rx="4" fill="#fcf9f2"/>
+            <path d="M172 107 C179 107, 179 118, 172 118"/>
+            <path d="M155 95 C154 90, 158 88, 157 83 M163 95 C162 90, 166 88, 165 83"/>
+            <path d="M178 138 L226 146 L218 158 L170 150 Z" fill="#fcf9f2"/>
+            <path d="M174 151 L222 159 L214 170 L166 162 Z" fill="#fcf9f2"/>
+            <path d="M170 163 L218 171 L210 182 L162 174 Z" fill="#fcf9f2"/>
+          </svg>
+        `,
+        book: `
+          <svg width="240" height="190" viewBox="0 0 260 210" fill="none" stroke="#3a3532" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M98 92 C98 70, 106 58, 114 52 L120 64 C128 61, 138 61, 146 64 L154 52 C162 58, 168 72, 166 94"/>
+            <ellipse cx="122" cy="78" rx="10" ry="7"/>
+            <ellipse cx="146" cy="78" rx="10" ry="7"/>
+            <path d="M132 78 L136 78"/>
+            <circle cx="122" cy="78" r="2" fill="#3a3532"/>
+            <circle cx="146" cy="78" r="2" fill="#3a3532"/>
+            <path d="M102 82 L88 80 M102 88 L89 90 M164 82 L178 80 M164 88 L177 90"/>
+            <path d="M46 96 C74 88, 108 94, 130 112 C152 94, 186 88, 214 96 L196 174 C170 166, 146 170, 130 184 C114 170, 90 166, 64 174 Z" fill="#fcf9f2"/>
+            <path d="M130 112 L130 184"/>
+            <path d="M54 90 C80 84, 110 88, 130 105 C150 88, 180 84, 206 90"/>
+            <path d="M88 94 C84 85, 96 83, 99 92"/>
+            <path d="M164 92 C167 83, 179 85, 175 94"/>
+          </svg>
+        `,
+        peek: `
+          <svg width="96" height="46" viewBox="0 0 110 52" fill="none" stroke="#3a3532" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M26 46 C26 28, 32 18, 38 12 L44 22 C51 19, 59 19, 66 22 L72 12 C78 18, 84 28, 84 46"/>
+            <ellipse cx="47" cy="33" rx="7" ry="5"/>
+            <ellipse cx="63" cy="33" rx="7" ry="5"/>
+            <path d="M54 33 L56 33"/>
+            <circle cx="47" cy="33" r="1.5" fill="#3a3532"/>
+            <circle cx="63" cy="33" r="1.5" fill="#3a3532"/>
+            <path d="M26 35 L12 33 M26 40 L14 42 M84 35 L98 33 M84 40 L96 42"/>
+            <path d="M14 46 L96 46"/>
+          </svg>
+        `,
+        sitting: `
+          <svg width="112" height="94" viewBox="0 0 130 110" fill="none" stroke="#3a3532" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M36 96 C26 88, 28 66, 40 54 C38 42, 42 32, 48 26 L54 35 C60 33, 68 33, 74 35 L80 26 C86 32, 90 42, 88 54 C100 66, 102 88, 92 96 Z"/>
+            <circle cx="56" cy="46" r="2" fill="#3a3532"/>
+            <circle cx="72" cy="46" r="2" fill="#3a3532"/>
+            <path d="M61 52 Q64 55 67 52"/>
+            <path d="M96 86 C110 86, 118 72, 112 62 C108 56, 102 60, 104 66"/>
+            <path d="M52 96 L52 80 M76 96 L76 80"/>
+          </svg>
+        `,
+        star: `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3a3532" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 2 V22 M2 12 H22 M5 5 L19 19 M19 5 L5 19"/>
+          </svg>
+        `,
+        flower: `
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none" stroke="#3a3532" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="16" cy="16" r="4"/>
+            <path d="M16 12 C12 5, 20 5, 16 12 M20 16 C27 12, 27 20, 20 16 M16 20 C20 27, 12 27, 16 20 M12 16 C5 20, 5 12, 12 16"/>
+          </svg>
+        `,
+        smiley: `
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="#3a3532" aria-hidden="true">
+            <circle cx="16" cy="16" r="14"/>
+            <circle cx="11.5" cy="13" r="1.8" fill="#fcf9f2"/>
+            <circle cx="20.5" cy="13" r="1.8" fill="#fcf9f2"/>
+            <path d="M10.5 19 Q16 24 21.5 19" stroke="#fcf9f2" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          </svg>
+        `
+      };
+
+      // ==================== FECHAS LOCALES EXACTAS ====================
+      function getLocalToday() {
+        const now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      }
+
+      function toDateKey(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+
+      function addDays(d, delta) {
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate() + delta);
+      }
+
+      function getMondayOf(d) {
+        const dayOfWeek = d.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+        const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate() + diff);
+      }
+
+      function formatWeekRange(monday) {
+        const sunday = addDays(monday, 6);
+        const m1 = MONTHS[monday.getMonth()].short;
+        const m2 = MONTHS[sunday.getMonth()].short;
+        if (monday.getFullYear() !== sunday.getFullYear()) {
+          return `${monday.getDate()} ${m1} ${monday.getFullYear()} – ${sunday.getDate()} ${m2} ${sunday.getFullYear()}`;
+        }
+        if (monday.getMonth() !== sunday.getMonth()) {
+          return `${monday.getDate()} ${m1} – ${sunday.getDate()} ${m2} ${sunday.getFullYear()}`;
+        }
+        return `${monday.getDate()} – ${sunday.getDate()} ${m1} ${monday.getFullYear()}`;
+      }
+
+      function getWeeklyQuote(monday) {
+        const ref = new Date(2025, 0, 6);
+        const diffDays = Math.round((monday - ref) / 86400000);
+        const weekIndex = Math.floor(diffDays / 7);
+        const idx = ((weekIndex % WEEKLY_QUOTES.length) + WEEKLY_QUOTES.length) % WEEKLY_QUOTES.length;
+        return WEEKLY_QUOTES[idx];
+      }
+
+      // ==================== PERSISTENCIA LOCAL + NUBE (TIEMPO REAL + COMPATIBLE iOS/NOTION) ====================
+      function getDefaultData() {
+        return {
+          owner: '',
+          motto: 'Disfrutar las pequeñas cosas cada día ✨',
+          intentions: {},
+          calendar: {},
+          calNotes: {},
+          weekly: {},
+          monthNotes: {},
+          todos: {},
+          reviews: {},
+          habitNames: ['Tomar agua 💧', 'Leer 15 min 📖', 'Mover el cuerpo 🌿'],
+          habitChecks: {},
+          notesPages: [
+            {
+              id: 'n1',
+              title: 'Ideas & Sueños',
+              content: '<div class="inline-todo"><span class="inline-cb" contenteditable="false"></span><span class="inline-todo-text">Escribir 3 cosas buenas cada noche</span></div><div class="inline-todo"><span class="inline-cb" contenteditable="false"></span><span class="inline-todo-text">Leer 15 minutos antes de dormir</span></div><div class="inline-todo"><span class="inline-cb" contenteditable="false"></span><span class="inline-todo-text">Tomar más agua y caminar al sol</span></div>'
+            }
+          ],
+          activeNoteId: 'n1'
+        };
+      }
+
+      function loadLocalData() {
+        const defaults = getDefaultData();
+        try {
+          const raw = window.localStorage.getItem(STORAGE_KEY);
+          if (!raw) return defaults;
+          const parsed = JSON.parse(raw);
+          return Object.assign({}, defaults, parsed, {
+            habitNames: Array.isArray(parsed.habitNames) ? parsed.habitNames : defaults.habitNames,
+            habitChecks: parsed.habitChecks && typeof parsed.habitChecks === 'object' ? parsed.habitChecks : {},
+            notesPages: Array.isArray(parsed.notesPages) && parsed.notesPages.length ? parsed.notesPages : defaults.notesPages
+          });
+        } catch (err) {
+          return defaults;
+        }
+      }
+
+      function saveLocalData() {
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (err) {
+          // Modo memoria si iOS/Notion bloquea storage en iframe
+        }
+      }
+
+      function sanitizeSyncCode(raw) {
+        return String(raw || '')
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '')
+          .slice(0, 48);
+      }
+
+      function loadSavedSyncCode() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const urlCode = sanitizeSyncCode(params.get('code') || '');
+          if (urlCode) return urlCode;
+        } catch (err) {
+          // Ignorar si no se puede leer la URL
+        }
+        try {
+          return sanitizeSyncCode(window.localStorage.getItem(SYNC_CODE_KEY) || '');
+        } catch (err) {
+          return '';
+        }
+      }
+
+      function persistSyncCode(code) {
+        try {
+          if (code) window.localStorage.setItem(SYNC_CODE_KEY, code);
+          else window.localStorage.removeItem(SYNC_CODE_KEY);
+        } catch (err) {
+          // Ignorar si iOS/Notion restringe storage
+        }
+      }
+
+      let data = loadLocalData();
+      let db = null;
+      let auth = null;
+      let currentUser = null;
+      let activeSyncCode = loadSavedSyncCode();
+      let unsubscribeSnapshot = null;
+      let saveTimer = null;
+      let lastCloudError = '';
+
+      function updateStatusPill(text) {
+        const statusEl = document.getElementById('saveStatus');
+        if (statusEl) statusEl.textContent = text;
+      }
+
+      function updateCloudModalInfo() {
+        const modeEl = document.getElementById('cloudModeText');
+        const uidEl = document.getElementById('cloudUserId');
+        const inputEl = document.getElementById('syncCodeInput');
+        if (uidEl) uidEl.textContent = currentUser ? currentUser.uid : 'Sin sesión en la nube';
+        if (inputEl && document.activeElement !== inputEl) {
+          inputEl.value = activeSyncCode;
+        }
+        if (modeEl) {
+          if (lastCloudError) {
+            modeEl.textContent = '⚠️ Error de conexión: ' + lastCloudError;
+          } else if (!currentUser || !db) {
+            modeEl.textContent = 'Modo local (conectando con Firebase...)';
+          } else if (activeSyncCode) {
+            modeEl.textContent = `Conectada en tiempo real · Código: ${activeSyncCode}`;
+          } else {
+            modeEl.textContent = 'Conectada en tiempo real · Tu espacio privado';
+          }
+        }
+      }
+
+      function getActiveDocRef() {
+        if (!db || !currentUser) return null;
+        if (activeSyncCode) {
+          return doc(db, 'artifacts', appId, 'public', 'data', 'shared_agendas', activeSyncCode);
+        }
+        return doc(db, 'artifacts', appId, 'users', currentUser.uid, 'agenda', 'main');
+      }
+
+      function subscribeToCloud(isSwitchingRoom) {
+        if (!db || !currentUser) return;
+        if (unsubscribeSnapshot) {
+          unsubscribeSnapshot();
+          unsubscribeSnapshot = null;
+        }
+
+        const docRef = getActiveDocRef();
+        if (!docRef) return;
+
+        lastCloudError = '';
+        updateStatusPill('☁️ Sincronizando...');
+        updateCloudModalInfo();
+
+        unsubscribeSnapshot = onSnapshot(
+          docRef,
+          function (snap) {
+            lastCloudError = '';
+            if (snap.exists()) {
+              const remote = snap.data();
+              if (remote && remote.lastClientId === CLIENT_ID && !isSwitchingRoom) {
+                updateStatusPill('☁️ Sincronizado ✓');
+                return;
+              }
+              if (remote && typeof remote.payloadJson === 'string') {
+                try {
+                  const parsed = JSON.parse(remote.payloadJson);
+                  const defaults = getDefaultData();
+                  data = Object.assign({}, defaults, parsed, {
+                    habitNames: Array.isArray(parsed.habitNames) ? parsed.habitNames : defaults.habitNames,
+                    habitChecks: parsed.habitChecks && typeof parsed.habitChecks === 'object' ? parsed.habitChecks : {},
+                    notesPages: Array.isArray(parsed.notesPages) && parsed.notesPages.length ? parsed.notesPages : defaults.notesPages
+                  });
+                  saveLocalData();
+                  render();
+                } catch (parseErr) {
+                  showToast('No se pudo leer el respaldo de la nube');
+                }
+              }
+            }
+            isSwitchingRoom = false;
+            updateStatusPill('☁️ Sincronizado ✓');
+            updateCloudModalInfo();
+          },
+          function (err) {
+            lastCloudError = (err && err.code) ? err.code : 'sin-permiso';
+            updateStatusPill('⚠️ Error de nube');
+            updateCloudModalInfo();
+            showToast('Error de nube (' + lastCloudError + ')');
+          }
+        );
+      }
+
+      async function initCloudSync() {
+        try {
+          let firebaseConfig = null;
+
+          if (MI_FIREBASE_CONFIG && MI_FIREBASE_CONFIG.apiKey && MI_FIREBASE_CONFIG.projectId) {
+            firebaseConfig = MI_FIREBASE_CONFIG;
+          } else if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+            firebaseConfig = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
+          }
+
+          if (!firebaseConfig) {
+            updateStatusPill('Guardado local ✓');
+            updateCloudModalInfo();
+            return;
+          }
+
+          updateStatusPill('☁️ Conectando...');
+          const app = initializeApp(firebaseConfig);
+
+          // Compatibilidad con iframes estrictos de iOS / Notion (respaldo automático en memoria)
+          auth = initializeAuth(app, {
+            persistence: [indexedDBLocalPersistence, browserLocalPersistence, inMemoryPersistence]
+          });
+
+          // Modo Long Polling sin Fetch Streams para evitar cortes en WebView de iPhone
+          db = initializeFirestore(app, {
+            experimentalForceLongPolling: true,
+            useFetchStreams: false
+          });
+
+          const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+          if (initialToken && !MI_FIREBASE_CONFIG.apiKey) {
+            const cred = await signInWithCustomToken(auth, initialToken);
+            currentUser = cred.user;
+          } else {
+            const cred = await signInAnonymously(auth);
+            currentUser = cred.user;
+          }
+
+          lastCloudError = '';
+          updateCloudModalInfo();
+          subscribeToCloud(true);
+        } catch (err) {
+          lastCloudError = (err && err.code) ? err.code : 'auth-bloqueado';
+          updateStatusPill('⚠️ Error de nube');
+          updateCloudModalInfo();
+        }
+      }
+
+      function saveData() {
+        saveLocalData();
+
+        if (!db || !currentUser) {
+          updateStatusPill('Guardando...');
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(function () {
+            updateStatusPill('Guardado local ✓');
+          }, 350);
+          return;
+        }
+
+        updateStatusPill('☁️ Guardando...');
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(async function () {
+          if (!db || !currentUser) return;
+          const docRef = getActiveDocRef();
+          if (!docRef) return;
+          try {
+            await setDoc(docRef, {
+              payloadJson: JSON.stringify(data),
+              updatedAt: Date.now(),
+              lastClientId: CLIENT_ID
+            });
+            lastCloudError = '';
+            updateStatusPill('☁️ Sincronizado ✓');
+          } catch (err) {
+            lastCloudError = (err && err.code) ? err.code : 'sin-conexion';
+            updateStatusPill('⚠️ Sin conexión');
+          }
+        }, 500);
+      }
+
+      function copyTextFallback(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            showToast('📋 Código copiado');
+          }).catch(function () {
+            legacyCopy(text);
+          });
+        } else {
+          legacyCopy(text);
+        }
+      }
+
+      function legacyCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          showToast('📋 Código copiado');
+        } catch (err) {
+          showToast('No se pudo copiar el código');
+        }
+        document.body.removeChild(ta);
+      }
+
+      // ==================== UTILIDADES DE UI Y RICH-TEXT ====================
+      let toastTimer = null;
+      function showToast(msg) {
+        const el = document.getElementById('toast');
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () {
+          el.classList.remove('show');
+        }, 2300);
+      }
+
+      function escapeHtml(str) {
+        return String(str || '').replace(/[&<>"']/g, function (ch) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+        });
+      }
+
+      function toSafeRichHtml(val) {
+        if (!val) return '';
+        const str = String(val);
+        if (!/[<>]/.test(str)) {
+          return escapeHtml(str).replace(/\n/g, '<br>');
+        }
+        return str;
+      }
+
+      let activeRichEditor = null;
+
+      function bindRichEditor(el, onSave) {
+        if (!el) return;
+        el.addEventListener('focus', function () {
+          activeRichEditor = el;
+        });
+        el.addEventListener('input', function () {
+          onSave(el.innerHTML);
+          saveData();
+        });
+        el.addEventListener('click', function (e) {
+          const cb = e.target.closest('.inline-cb');
+          if (!cb) return;
+          e.preventDefault();
+          e.stopPropagation();
+          const row = cb.closest('.inline-todo');
+          if (!row) return;
+          const isDone = row.classList.toggle('done');
+          cb.textContent = isDone ? '✓' : '';
+          onSave(el.innerHTML);
+          saveData();
+        });
+      }
+
+      function insertInlineTodo() {
+        const sel = window.getSelection();
+        let targetEditor = activeRichEditor;
+
+        if (sel && sel.rangeCount > 0) {
+          const anchorNode = sel.anchorNode;
+          const closestEditor = anchorNode && (anchorNode.nodeType === 1
+            ? anchorNode.closest('.rich-area')
+            : anchorNode.parentElement && anchorNode.parentElement.closest('.rich-area'));
+          if (closestEditor) {
+            targetEditor = closestEditor;
+          }
+        }
+
+        if (!targetEditor || !document.body.contains(targetEditor)) {
+          showToast('Toca primero dentro de un día o nota para insertar ☑ Tarea');
+          return;
+        }
+
+        targetEditor.focus();
+
+        const row = document.createElement('div');
+        row.className = 'inline-todo';
+
+        const cb = document.createElement('span');
+        cb.className = 'inline-cb';
+        cb.setAttribute('contenteditable', 'false');
+        cb.textContent = '';
+
+        const txt = document.createElement('span');
+        txt.className = 'inline-todo-text';
+        txt.innerHTML = 'Nueva tarea';
+
+        row.appendChild(cb);
+        row.appendChild(txt);
+
+        const currentSel = window.getSelection();
+        if (currentSel && currentSel.rangeCount > 0 && targetEditor.contains(currentSel.anchorNode)) {
+          const range = currentSel.getRangeAt(0);
+          range.deleteContents();
+          range.insertNode(row);
+        } else {
+          targetEditor.appendChild(row);
+        }
+
+        const newRange = document.createRange();
+        newRange.selectNodeContents(txt);
+        currentSel.removeAllRanges();
+        currentSel.addRange(newRange);
+
+        targetEditor.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+      function applyFormatCommand(cmd, value) {
+        if (cmd === 'insertTodo') {
+          insertInlineTodo();
+          return;
+        }
+
+        if (!activeRichEditor || !document.body.contains(activeRichEditor)) {
+          showToast('Selecciona texto dentro de un cuadro para aplicar formato');
+          return;
+        }
+
+        activeRichEditor.focus();
+
+        try {
+          if (cmd === 'clearFormat') {
+            document.execCommand('removeFormat', false, null);
+            document.execCommand('hiliteColor', false, 'transparent');
+            document.execCommand('foreColor', false, '#3a3532');
+          } else if (cmd === 'hiliteColor') {
+            const ok = document.execCommand('hiliteColor', false, value);
+            if (!ok) document.execCommand('backColor', false, value);
+          } else {
+            document.execCommand(cmd, false, value || null);
+          }
+          activeRichEditor.dispatchEvent(new Event('input', { bubbles: true }));
+        } catch (err) {
+          showToast('No se pudo aplicar el formato en este navegador');
+        }
+      }
+
+      // ==================== ESTADO INICIAL EN HORA LOCAL ====================
+      const initialNow = getLocalToday();
+      const state = {
+        view: 'cover',
+        year: initialNow.getFullYear(),
+        month: initialNow.getMonth(),
+        weekStart: getMondayOf(initialNow),
+        layoutMode: 'double'
+      };
+
+      let lastRenderedTodayKey = toDateKey(initialNow);
+
+      function getMonthKey() {
+        return `${state.year}-${String(state.month + 1).padStart(2, '0')}`;
+      }
+
+      function ensureYearOption(year) {
+        const ySel = document.getElementById('yearSelect');
+        if (!ySel) return;
+        const exists = Array.from(ySel.options).some(function (opt) {
+          return Number(opt.value) === year;
+        });
+        if (!exists) {
+          const opt = document.createElement('option');
+          opt.value = String(year);
+          opt.textContent = String(year);
+          ySel.appendChild(opt);
+        }
+      }
+
+      function syncTopControls() {
+        ensureYearOption(state.year);
+        const mSel = document.getElementById('monthSelect');
+        const ySel = document.getElementById('yearSelect');
+        const layoutBtn = document.getElementById('btnLayout');
+        const spread = document.getElementById('spread');
+        if (mSel) mSel.value = String(state.month);
+        if (ySel) ySel.value = String(state.year);
+        if (spread) {
+          spread.classList.toggle('single-page', state.layoutMode === 'single');
+        }
+        if (layoutBtn) {
+          const isSingle = state.layoutMode === 'single';
+          layoutBtn.textContent = isSingle ? '📄 1 pág' : '📖 2 pág';
+          layoutBtn.classList.toggle('layout-active', isSingle);
+        }
+        document.querySelectorAll('#tabsBar .tab-btn').forEach(function (btn) {
+          btn.classList.toggle('active', btn.dataset.view === state.view);
+        });
+      }
+
+      // ==================== RENDERIZADO DE LAS 7 VISTAS ====================
+      function render() {
+        const spread = document.getElementById('spread');
+        if (!spread) return;
+        syncTopControls();
+        lastRenderedTodayKey = toDateKey(getLocalToday());
+
+        if (state.view === 'cover') renderCover(spread);
+        else if (state.view === 'monthCover') renderMonthCover(spread);
+        else if (state.view === 'monthly') renderMonthly(spread);
+        else if (state.view === 'weekly') renderWeekly(spread);
+        else if (state.view === 'todo') renderTodo(spread);
+        else if (state.view === 'review') renderReview(spread);
+        else if (state.view === 'notes') renderNotes(spread);
+      }
+
+      // 1. PORTADA
+      function renderCover(spread) {
+        spread.innerHTML = `
+          <section class="page page-left justify-between gap-4">
+            <div>
+              <div class="love-card">
+                <div class="grid grid-cols-2 gap-3 text-[11px] leading-snug mb-3">
+                  <div>
+                    <strong>I like small things</strong><br><br>
+                    Sin presión — encontrar sentido en las pequeñas cosas que dan forma a mi día.
+                  </div>
+                  <div>
+                    Un café tibio, una mañana tranquila, una página escrita sin prisa: un momento solo para mí.
+                  </div>
+                </div>
+                <div class="text-right font-bold tracking-[0.16em] text-xs">LOVE MY LIFE</div>
+              </div>
+            </div>
+
+            <div class="flex justify-center my-2">
+              ${SVGS.coffee}
+            </div>
+
+            <div class="frame-card">
+              <label for="ownerName" class="text-[11px] font-bold tracking-widest uppercase mb-1" style="color: var(--ink-soft);">Esta agenda pertenece a</label>
+              <input id="ownerName" type="text" value="${escapeHtml(data.owner)}" placeholder="Escribe tu nombre aquí..."
+                class="hand text-xl bg-transparent border-0 border-b-[1.5px] border-dashed outline-none pb-1 mb-3 w-full"
+                style="border-color: var(--ink-soft); color: var(--ink);" />
+              <label for="ownerMotto" class="text-[11px] font-bold tracking-widest uppercase mb-1" style="color: var(--ink-soft);">Mi intención del año ${state.year}</label>
+              <input id="ownerMotto" type="text" value="${escapeHtml(data.motto)}" placeholder="Una frase que te acompañe..."
+                class="hand text-lg bg-transparent border-0 border-b-[1.5px] border-dashed outline-none pb-1 w-full"
+                style="border-color: var(--ink-soft); color: var(--ink);" />
+            </div>
+          </section>
+
+          <section class="page page-right justify-between gap-4">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-bold text-lg sm:text-xl tracking-[0.14em] uppercase">AGENDA ${state.year}</span>
+                ${SVGS.star}
+              </div>
+              <p class="text-xs leading-relaxed mt-2" style="color: var(--ink-soft);">
+                Elige un mes para abrir su portada ilustrada o navega con las pestañas entre vistas mensual, semanal, to-do list, resumen y notas.
+              </p>
+
+              <div class="grid grid-cols-3 gap-2.5 mt-4">
+                ${MONTHS.map(function (m, idx) {
+                  return `
+                    <button type="button" class="quick-month-btn ${idx === state.month ? 'current' : ''}" data-jump-month="${idx}">
+                      ${m.num}. ${m.name}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 border-t-[1.5px] border-dashed pt-3" style="border-color: var(--line);">
+              <span class="hand text-base" style="color: var(--ink-soft);">✨ Selecciona cualquier texto para resaltar, cambiar color o insertar tareas</span>
+              ${SVGS.flower}
+            </div>
+          </section>
+        `;
+
+        document.getElementById('ownerName').addEventListener('input', function (e) {
+          data.owner = e.target.value;
+          saveData();
+        });
+
+        document.getElementById('ownerMotto').addEventListener('input', function (e) {
+          data.motto = e.target.value;
+          saveData();
+        });
+
+        spread.querySelectorAll('[data-jump-month]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            state.month = Number(btn.dataset.jumpMonth);
+            state.weekStart = getMondayOf(new Date(state.year, state.month, 1));
+            state.view = 'monthCover';
+            render();
+          });
+        });
+      }
+
+      // 2. PORTADA DEL MES
+      function renderMonthCover(spread) {
+        const m = MONTHS[state.month];
+        const mKey = getMonthKey();
+
+        spread.innerHTML = `
+          <section class="page page-left mc-page-left">
+            <div class="mc-top-row">
+              <p class="mc-quote">
+                Un comienzo sereno y reconfortante.<br>Espacio para crear, ordenar y disfrutar.
+              </p>
+              ${SVGS.star}
+            </div>
+
+            <div class="mc-hero-left">
+              <div class="mc-word">${m.word}</div>
+              ${SVGS.sitting}
+            </div>
+
+            <div class="frame-card">
+              <div class="frame-head">
+                <span>MIS 3 PRIORIDADES DE ${m.name}</span>
+                ${SVGS.flower}
+              </div>
+              <div id="monthIntention" class="rich-area rich-ruled" style="min-height:112px;" contenteditable="true"
+                data-placeholder="1. ...&#10;2. ...&#10;3. ...">${toSafeRichHtml(data.intentions[mKey])}</div>
+            </div>
+          </section>
+
+          <section class="page page-right mc-page-right">
+            <div class="mc-top-row">
+              <p class="mc-quote">${m.q1}</p>
+              <p class="mc-quote mc-quote-right">${m.q2}</p>
+            </div>
+
+            <div class="mc-hero-right">
+              ${SVGS[m.doodle]}
+            </div>
+
+            <div class="mc-footer-right">
+              <span class="mc-quote" style="font-style:italic;">Una mente clara.</span>
+              <span class="mc-month-title">${m.num}. ${m.name}</span>
+            </div>
+          </section>
+        `;
+
+        bindRichEditor(document.getElementById('monthIntention'), function (html) {
+          data.intentions[mKey] = html;
+        });
+      }
+
+      // 3. VISTA MENSUAL
+      function renderMonthly(spread) {
+        const m = MONTHS[state.month];
+        const mKey = getMonthKey();
+        const startOffset = (new Date(state.year, state.month, 1).getDay() + 6) % 7;
+        const daysInMonth = new Date(state.year, state.month + 1, 0).getDate();
+        const totalRows = Math.ceil((startOffset + daysInMonth) / 7);
+        const todayKey = toDateKey(getLocalToday());
+
+        const leftCells = [];
+        const rightCells = [];
+
+        for (let row = 0; row < totalRows; row++) {
+          for (let col = 0; col < 7; col++) {
+            const idx = row * 7 + col;
+            const dayNum = idx - startOffset + 1;
+            const validDay = (dayNum >= 1 && dayNum <= daysInMonth) ? dayNum : null;
+            if (col < 4) leftCells.push(validDay);
+            else rightCells.push(validDay);
+          }
+        }
+
+        function buildCell(dayNum) {
+          if (!dayNum) return '<div class="cal-cell empty"></div>';
+          const dKey = toDateKey(new Date(state.year, state.month, dayNum));
+          const isToday = dKey === todayKey;
+          return `
+            <div class="cal-cell ${isToday ? 'is-today' : ''}">
+              <div class="flex items-center justify-between gap-1 mb-0.5">
+                <span class="text-xs font-bold">${dayNum}</span>
+                ${isToday ? '<span class="today-pill">HOY</span>' : ''}
+              </div>
+              <div class="rich-area rich-compact" contenteditable="true" data-cal-day="${dKey}" data-placeholder="">${toSafeRichHtml(data.calendar[dKey])}</div>
+            </div>
+          `;
+        }
+
+        const gridRowStyle = `grid-template-rows: 26px repeat(${totalRows}, 1fr);`;
+
+        spread.innerHTML = `
+          <section class="page page-left">
+            <div class="flex items-center justify-between gap-2 mb-2.5" style="min-height: 46px;">
+              <div class="flex items-center gap-1.5 font-bold text-base sm:text-lg tracking-widest">
+                <span>${m.num}.</span>
+                <span class="border-[1.6px] rounded-xl px-2.5 py-0.5 text-sm sm:text-base" style="border-color: var(--ink);">${m.name}</span>
+              </div>
+              <span class="text-xs font-bold tracking-widest" style="color: var(--ink-soft);">${state.year}</span>
+            </div>
+
+            <div class="cal-grid-left" style="${gridRowStyle}">
+              <div class="cal-head-cell">LUN</div>
+              <div class="cal-head-cell">MAR</div>
+              <div class="cal-head-cell">MIÉ</div>
+              <div class="cal-head-cell">JUE</div>
+              ${leftCells.map(buildCell).join('')}
+            </div>
+          </section>
+
+          <section class="page page-right">
+            <div class="flex items-end justify-between gap-2 mb-2.5" style="min-height: 46px;">
+              <div class="flex items-end" style="max-width: 96px;">${SVGS.peek}</div>
+              <span class="hand text-xs sm:text-sm text-right" style="color: var(--ink-soft);">Plan mensual · ${m.name}</span>
+            </div>
+
+            <div class="cal-right-layout">
+              <div class="cal-grid-right" style="${gridRowStyle}">
+                <div class="cal-head-cell">VIE</div>
+                <div class="cal-head-cell">SÁB</div>
+                <div class="cal-head-cell">DOM</div>
+                ${rightCells.map(buildCell).join('')}
+              </div>
+
+              <div class="frame-card !p-2.5 flex flex-col">
+                <div class="text-center text-[11px] font-bold tracking-[0.14em] border-b-[1.4px] pb-1 mb-1.5" style="border-color: var(--ink);">NOTAS</div>
+                <div id="calNotesBox" class="rich-area rich-ruled !text-sm !leading-[24px] !min-h-[82px]" contenteditable="true"
+                  data-placeholder="Recordatorios del mes...">${toSafeRichHtml(data.calNotes[mKey])}</div>
+                <div class="flex items-center justify-between mt-1.5 pt-1">
+                  ${SVGS.flower}
+                  <span class="hand text-base font-bold">!!!</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        `;
+
+        spread.querySelectorAll('[data-cal-day]').forEach(function (el) {
+          bindRichEditor(el, function (html) {
+            data.calendar[el.dataset.calDay] = html;
+          });
+        });
+
+        bindRichEditor(document.getElementById('calNotesBox'), function (html) {
+          data.calNotes[mKey] = html;
+        });
+      }
+
+      // 4. VISTA SEMANAL
+      function renderWeekly(spread) {
+        const monday = new Date(state.weekStart.getFullYear(), state.weekStart.getMonth(), state.weekStart.getDate());
+        const weekKey = toDateKey(monday);
+        const todayKey = toDateKey(getLocalToday());
+        const dayLabels = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'];
+
+        const days = dayLabels.map(function (label, idx) {
+          const d = addDays(monday, idx);
+          const dKey = toDateKey(d);
+          return {
+            label: label,
+            num: d.getDate(),
+            monthShort: MONTHS[d.getMonth()].short.toUpperCase(),
+            key: dKey,
+            isToday: dKey === todayKey
+          };
+        });
+
+        const todayColIndex = days.findIndex(function (d) { return d.isToday; });
+
+        if (!data.habitChecks[weekKey]) {
+          data.habitChecks[weekKey] = {};
+        }
+
+        function dayCardHtml(d, isWeekend) {
+          return `
+            <div class="day-card ${d.isToday ? 'is-today' : ''}">
+              <div class="day-card-head ${isWeekend ? 'weekend' : ''}">
+                <span>${d.num} ${d.label} <span class="opacity-70 font-semibold">${d.monthShort}</span></span>
+                ${d.isToday ? '<span class="today-pill">HOY</span>' : ''}
+              </div>
+              <div class="rich-area rich-ruled" contenteditable="true"
+                data-week-day="${d.key}" data-placeholder="Escribe tus planes...">${toSafeRichHtml(data.weekly[d.key])}</div>
+            </div>
+          `;
+        }
+
+        const habitRowsHtml = data.habitNames.map(function (hName, hIdx) {
+          const checks = data.habitChecks[weekKey][hIdx] || [false, false, false, false, false, false, false];
+          return `
+            <tr>
+              <td class="col-name-td">
+                <input type="text" class="habit-name-input" data-habit-name="${hIdx}" value="${escapeHtml(hName)}" placeholder="Nombre del hábito..." />
+              </td>
+              ${HABIT_DAYS.map(function (_, dIdx) {
+                const isChecked = !!checks[dIdx];
+                const isTodayCol = dIdx === todayColIndex;
+                return `
+                  <td class="${isTodayCol ? 'is-today-col' : ''}">
+                    <button type="button" class="habit-cb ${isChecked ? 'checked' : ''}" data-habit-check="${hIdx}-${dIdx}" aria-label="${escapeHtml(hName)} ${HABIT_DAYS[dIdx]}">${isChecked ? '✓' : ''}</button>
+                  </td>
+                `;
+              }).join('')}
+              <td class="no-print">
+                <button type="button" class="text-[11px] opacity-60 hover:opacity-100 cursor-pointer bg-transparent border-0 p-0" data-habit-del="${hIdx}" title="Eliminar hábito">✕</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        spread.innerHTML = `
+          <section class="page page-left weekly-page">
+            <div class="flex items-center justify-between gap-1.5 no-print">
+              <button type="button" id="prevWeek" class="ctrl-btn !text-xs">← Ant.</button>
+              <span class="font-bold text-xs tracking-wider text-center">${formatWeekRange(monday)}</span>
+              <button type="button" id="nextWeek" class="ctrl-btn !text-xs">Sig. →</button>
+            </div>
+
+            <div class="weekly-quote-strip">
+              <span class="text-sm shrink-0" aria-hidden="true">✨</span>
+              <span class="hand text-sm sm:text-base leading-snug">“${escapeHtml(getWeeklyQuote(monday))}”</span>
+            </div>
+
+            ${dayCardHtml(days[0], false)}
+            ${dayCardHtml(days[1], false)}
+            ${dayCardHtml(days[2], false)}
+          </section>
+
+          <section class="page page-right weekly-page">
+            ${dayCardHtml(days[3], false)}
+            ${dayCardHtml(days[4], false)}
+
+            <div class="weekend-grid">
+              ${dayCardHtml(days[5], true)}
+              ${dayCardHtml(days[6], true)}
+            </div>
+
+            <div class="habit-box">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-[11px] font-bold tracking-widest uppercase">🌿 Hábitos de la semana</span>
+                <button type="button" id="addHabitBtn" class="ctrl-btn !py-0.5 !px-2 !text-[11px] no-print">+ Hábito</button>
+              </div>
+              <table class="habit-table" aria-label="Hábitos de la semana">
+                <colgroup>
+                  <col class="col-name" />
+                  <col class="col-day" />
+                  <col class="col-day" />
+                  <col class="col-day" />
+                  <col class="col-day" />
+                  <col class="col-day" />
+                  <col class="col-day" />
+                  <col class="col-day" />
+                  <col class="col-del" />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="col-name-th">HÁBITO</th>
+                    ${HABIT_DAYS.map(function (d, dIdx) {
+                      const isTodayCol = dIdx === todayColIndex;
+                      return `<th class="${isTodayCol ? 'is-today-col' : ''}">${d}</th>`;
+                    }).join('')}
+                    <th class="no-print"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${habitRowsHtml}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+
+        document.getElementById('prevWeek').addEventListener('click', function () {
+          state.weekStart = addDays(monday, -7);
+          const thursday = addDays(state.weekStart, 3);
+          state.year = thursday.getFullYear();
+          state.month = thursday.getMonth();
+          render();
+        });
+
+        document.getElementById('nextWeek').addEventListener('click', function () {
+          state.weekStart = addDays(monday, 7);
+          const thursday = addDays(state.weekStart, 3);
+          state.year = thursday.getFullYear();
+          state.month = thursday.getMonth();
+          render();
+        });
+
+        spread.querySelectorAll('[data-week-day]').forEach(function (el) {
+          bindRichEditor(el, function (html) {
+            data.weekly[el.dataset.weekDay] = html;
+          });
+        });
+
+        spread.querySelectorAll('[data-habit-name]').forEach(function (inp) {
+          inp.addEventListener('input', function () {
+            const idx = Number(inp.dataset.habitName);
+            data.habitNames[idx] = inp.value;
+            saveData();
+          });
+        });
+
+        spread.querySelectorAll('[data-habit-check]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const parts = btn.dataset.habitCheck.split('-').map(Number);
+            const hIdx = parts[0];
+            const dIdx = parts[1];
+            if (!data.habitChecks[weekKey][hIdx]) {
+              data.habitChecks[weekKey][hIdx] = [false, false, false, false, false, false, false];
+            }
+            data.habitChecks[weekKey][hIdx][dIdx] = !data.habitChecks[weekKey][hIdx][dIdx];
+            saveData();
+            render();
+          });
+        });
+
+        spread.querySelectorAll('[data-habit-del]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const idx = Number(btn.dataset.habitDel);
+            data.habitNames.splice(idx, 1);
+            const updated = {};
+            Object.keys(data.habitChecks[weekKey]).forEach(function (k) {
+              const num = Number(k);
+              if (num < idx) updated[num] = data.habitChecks[weekKey][k];
+              else if (num > idx) updated[num - 1] = data.habitChecks[weekKey][k];
+            });
+            data.habitChecks[weekKey] = updated;
+            saveData();
+            render();
+          });
+        });
+
+        document.getElementById('addHabitBtn').addEventListener('click', function () {
+          data.habitNames.push('Nuevo hábito ✨');
+          saveData();
+          render();
+        });
+      }
+
+      // 5. ANOTACIONES DEL MES Y TO-DO LIST
+      function renderTodo(spread) {
+        const m = MONTHS[state.month];
+        const mKey = getMonthKey();
+        if (!Array.isArray(data.todos[mKey])) {
+          data.todos[mKey] = [
+            { id: 't1', text: 'Organizar mis metas del mes', done: false },
+            { id: 't2', text: 'Reservar un rato de descanso para mí', done: false }
+          ];
+        }
+
+        spread.innerHTML = `
+          <section class="page page-left">
+            <div class="frame-card flex-1">
+              <div class="frame-head">
+                <span>ANOTACIONES DEL MES · ${m.name}</span>
+                ${SVGS.star}
+              </div>
+              <div id="monthAnotaciones" class="rich-area rich-ruled flex-1" contenteditable="true"
+                data-placeholder="Ideas, recordatorios, compras o pendientes del mes...">${toSafeRichHtml(data.monthNotes[mKey])}</div>
+            </div>
+          </section>
+
+          <section class="page page-right">
+            <div class="frame-card flex-1">
+              <div class="flex items-end justify-between border-b-[1.4px] pb-1.5 mb-3" style="border-color: var(--ink);">
+                <div style="margin-bottom:-6px;">${SVGS.peek}</div>
+                <span class="hand text-2xl font-bold tracking-wider">☑ TO DO LIST</span>
+              </div>
+
+              <div class="flex gap-2 mb-3 no-print">
+                <input id="newTodoInput" type="text" placeholder="Agregar nueva tarea..."
+                  class="flex-1 min-w-0 hand text-base bg-white border-[1.4px] rounded-xl px-3 py-1.5 outline-none"
+                  style="border-color: var(--ink); color: var(--ink);" />
+                <button type="button" id="addTodoBtn" class="ctrl-btn">+ Añadir</button>
+              </div>
+
+              <ul class="list-none m-0 p-0 flex-1 overflow-y-auto" id="todoList">
+                ${data.todos[mKey].map(function (t, idx) {
+                  return `
+                    <li class="todo-item ${t.done ? 'done' : ''}">
+                      <button type="button" class="todo-cb" data-toggle-todo="${idx}" aria-label="Marcar tarea">${t.done ? '✓' : ''}</button>
+                      <span class="todo-label hand text-lg flex-1 cursor-pointer" data-toggle-todo="${idx}">${escapeHtml(t.text)}</span>
+                      <button type="button" class="text-sm opacity-60 hover:opacity-100 bg-transparent border-0 cursor-pointer px-1 no-print" data-del-todo="${idx}" title="Eliminar">✕</button>
+                    </li>
+                  `;
+                }).join('')}
+              </ul>
+            </div>
+          </section>
+        `;
+
+        bindRichEditor(document.getElementById('monthAnotaciones'), function (html) {
+          data.monthNotes[mKey] = html;
+        });
+
+        function addTask() {
+          const inp = document.getElementById('newTodoInput');
+          const txt = inp.value.trim();
+          if (!txt) return;
+          data.todos[mKey].push({ id: 't' + Date.now(), text: txt, done: false });
+          saveData();
+          render();
+        }
+
+        document.getElementById('addTodoBtn').addEventListener('click', addTask);
+        document.getElementById('newTodoInput').addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') addTask();
+        });
+
+        spread.querySelectorAll('[data-toggle-todo]').forEach(function (el) {
+          el.addEventListener('click', function () {
+            const idx = Number(el.dataset.toggleTodo);
+            data.todos[mKey][idx].done = !data.todos[mKey][idx].done;
+            saveData();
+            render();
+          });
+        });
+
+        spread.querySelectorAll('[data-del-todo]').forEach(function (el) {
+          el.addEventListener('click', function () {
+            const idx = Number(el.dataset.delTodo);
+            data.todos[mKey].splice(idx, 1);
+            saveData();
+            render();
+          });
+        });
+      }
+
+      // 6. ¿CÓMO FUE TU MES?
+      function renderReview(spread) {
+        const m = MONTHS[state.month];
+        const mKey = getMonthKey();
+        if (!data.reviews[mKey]) {
+          data.reviews[mKey] = { summary: '', media: '', music: '', activity: '', food: '', gratitude: '', mood: '' };
+        }
+        const r = data.reviews[mKey];
+        const moods = ['✨', '😊', '☕', '🌿', '😴'];
+
+        spread.innerHTML = `
+          <section class="page page-left rev-page">
+            <div class="rev-header">
+              <span>¿CÓMO FUE TU ${m.name}?</span>
+              ${SVGS.smiley}
+            </div>
+
+            <div class="rev-main-grid">
+              <div class="rev-left-col">
+                <div class="rev-summary-card">
+                  <div class="rev-sublabel" style="text-align:center; border-bottom:1px solid var(--line); padding-bottom:5px; margin-bottom:6px;">EN RESUMEN</div>
+                  <div class="rich-area rich-ruled" style="min-height:160px;" contenteditable="true" data-rev="summary" data-placeholder="Lo mejor de este mes...">${toSafeRichHtml(r.summary)}</div>
+                </div>
+                <div class="rev-cat-wrap">
+                  ${SVGS.sitting}
+                </div>
+              </div>
+
+              <div class="rev-fav-card">
+                <div class="rev-fav-banner">FAVORITOS DEL MES</div>
+                <div class="rev-fav-row">
+                  <div class="rev-sublabel">SERIE / PELÍCULA</div>
+                  <div class="rich-area rich-compact" contenteditable="true" data-rev="media" data-placeholder="Tu favorita...">${toSafeRichHtml(r.media)}</div>
+                </div>
+                <div class="rev-fav-row">
+                  <div class="rev-sublabel">CANCIÓN / ÁLBUM</div>
+                  <div class="rich-area rich-compact" contenteditable="true" data-rev="music" data-placeholder="La que más escuchaste...">${toSafeRichHtml(r.music)}</div>
+                </div>
+                <div class="rev-fav-row">
+                  <div class="rev-sublabel">ACTIVIDAD QUE MÁS HICE</div>
+                  <div class="rich-area rich-compact" contenteditable="true" data-rev="activity" data-placeholder="Tu momento favorito...">${toSafeRichHtml(r.activity)}</div>
+                </div>
+                <div class="rev-fav-row">
+                  <div class="rev-sublabel">COMIDA FAVORITA</div>
+                  <div class="rich-area rich-compact" contenteditable="true" data-rev="food" data-placeholder="Un antojo rico...">${toSafeRichHtml(r.food)}</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="page page-right rev-page">
+            <div class="rev-mood-card">
+              <div class="frame-head" style="margin-bottom:2px;">
+                <span>MI ENERGÍA DEL MES</span>
+                ${SVGS.star}
+              </div>
+              <div class="rev-mood-row">
+                ${moods.map(function (em) {
+                  return `<button type="button" class="mood-btn ${r.mood === em ? 'selected' : ''}" data-mood="${em}">${em}</button>`;
+                }).join('')}
+              </div>
+            </div>
+
+            <div class="frame-card" style="flex:1;">
+              <div class="frame-head">
+                <span>AGRADECIMIENTOS & APRENDIZAJES</span>
+                ${SVGS.flower}
+              </div>
+              <div class="rich-area rich-ruled" style="flex:1; min-height:240px;" contenteditable="true" data-rev="gratitude"
+                data-placeholder="¿Qué me hizo sonreír este mes? ¿Qué quiero llevar al mes siguiente?">${toSafeRichHtml(r.gratitude)}</div>
+            </div>
+          </section>
+        `;
+
+        spread.querySelectorAll('[data-rev]').forEach(function (el) {
+          bindRichEditor(el, function (html) {
+            data.reviews[mKey][el.dataset.rev] = html;
+          });
+        });
+
+        spread.querySelectorAll('[data-mood]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            data.reviews[mKey].mood = btn.dataset.mood;
+            saveData();
+            render();
+          });
+        });
+      }
+
+      // 7. NOTAS
+      function renderNotes(spread) {
+        if (!data.notesPages.length) {
+          data.notesPages.push({ id: 'n1', title: 'Nota 1', content: '' });
+        }
+        const active = data.notesPages.find(function (n) { return n.id === data.activeNoteId; }) || data.notesPages[0];
+        data.activeNoteId = active.id;
+
+        spread.innerHTML = `
+          <section class="page page-left notes-page-left">
+            <div class="notes-top-quotes">
+              <p class="mc-quote">
+                Un lugar para lo que vive en mi mente — pensamientos, planes y todo lo que quiero explorar.
+              </p>
+              <p class="mc-quote mc-quote-right">
+                Páginas para mis ideas.
+              </p>
+            </div>
+
+            <div class="notes-center-hero">
+              ${SVGS.book}
+              <div class="font-bold text-xl tracking-[0.22em] mt-1">NOTAS</div>
+            </div>
+
+            <div class="w-full flex flex-wrap justify-center gap-1.5 no-print">
+              ${data.notesPages.map(function (n) {
+                return `
+                  <button type="button" class="note-pill ${n.id === active.id ? 'active' : ''}" data-note-id="${n.id}">
+                    ${escapeHtml(n.title || 'Sin título')}
+                  </button>
+                `;
+              }).join('')}
+              <button type="button" class="note-pill" id="addNotePage">+ Nueva hoja</button>
+            </div>
+          </section>
+
+          <section class="page page-right">
+            <div class="notes-sheet-card">
+              <div class="notes-sheet-head">
+                <input id="noteTitle" type="text" value="${escapeHtml(active.title)}" placeholder="Título de la nota..." class="notes-sheet-title" />
+                ${data.notesPages.length > 1 ? '<button type="button" id="delNotePage" class="bg-transparent border-0 cursor-pointer text-base no-print" title="Eliminar hoja">🗑️</button>' : ''}
+              </div>
+              <div id="noteContent" class="rich-area notes-ruled" contenteditable="true"
+                data-placeholder="Escribe libremente aquí...">${toSafeRichHtml(active.content)}</div>
+            </div>
+          </section>
+        `;
+
+        spread.querySelectorAll('[data-note-id]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            data.activeNoteId = btn.dataset.noteId;
+            saveData();
+            render();
+          });
+        });
+
+        document.getElementById('addNotePage').addEventListener('click', function () {
+          const id = 'n' + Date.now();
+          data.notesPages.push({ id: id, title: 'Nota ' + (data.notesPages.length + 1), content: '' });
+          data.activeNoteId = id;
+          saveData();
+          render();
+        });
+
+        const delBtn = document.getElementById('delNotePage');
+        if (delBtn) {
+          delBtn.addEventListener('click', function () {
+            data.notesPages = data.notesPages.filter(function (n) { return n.id !== active.id; });
+            data.activeNoteId = data.notesPages[0].id;
+            saveData();
+            render();
+          });
+        }
+
+        document.getElementById('noteTitle').addEventListener('input', function (e) {
+          active.title = e.target.value;
+          saveData();
+          const pill = spread.querySelector('[data-note-id="' + active.id + '"]');
+          if (pill) pill.textContent = active.title || 'Sin título';
+        });
+
+        bindRichEditor(document.getElementById('noteContent'), function (html) {
+          active.content = html;
+        });
+      }
+
+      // ==================== INICIALIZACIÓN DE CONTROLES ====================
+      function initControls() {
+        const mSel = document.getElementById('monthSelect');
+        const ySel = document.getElementById('yearSelect');
+
+        mSel.innerHTML = MONTHS.map(function (m, idx) {
+          return `<option value="${idx}">${m.num}. ${m.name}</option>`;
+        }).join('');
+
+        ensureYearOption(state.year);
+
+        mSel.addEventListener('change', function () {
+          state.month = Number(mSel.value);
+          state.weekStart = getMondayOf(new Date(state.year, state.month, 1));
+          render();
+        });
+
+        ySel.addEventListener('change', function () {
+          state.year = Number(ySel.value);
+          state.weekStart = getMondayOf(new Date(state.year, state.month, 1));
+          render();
+        });
+
+        document.querySelectorAll('#tabsBar .tab-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            state.view = btn.dataset.view;
+            render();
+          });
+        });
+
+        document.getElementById('btnToday').addEventListener('click', function () {
+          const now = getLocalToday();
+          state.year = now.getFullYear();
+          state.month = now.getMonth();
+          state.weekStart = getMondayOf(now);
+          ensureYearOption(state.year);
+          if (state.view === 'cover' || state.view === 'notes') {
+            state.view = 'weekly';
+          }
+          render();
+          showToast('📍 Sincronizado con hoy');
+        });
+
+        document.getElementById('btnLayout').addEventListener('click', function () {
+          state.layoutMode = state.layoutMode === 'double' ? 'single' : 'double';
+          syncTopControls();
+          showToast(state.layoutMode === 'single' ? '📄 Vista de 1 página activada' : '📖 Vista de 2 páginas activada');
+        });
+
+        document.getElementById('btnPrint').addEventListener('click', function () {
+          window.print();
+        });
+
+        document.getElementById('btnExport').addEventListener('click', function () {
+          try {
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `mi-agenda-creativa-${state.year}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('💾 Respaldo exportado');
+          } catch (err) {
+            showToast('No se pudo exportar el respaldo');
+          }
+        });
+
+        const importFile = document.getElementById('importFile');
+        document.getElementById('btnImport').addEventListener('click', function () {
+          importFile.click();
+        });
+
+        importFile.addEventListener('change', function (e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function (ev) {
+            try {
+              const parsed = JSON.parse(ev.target.result);
+              data = Object.assign({}, getDefaultData(), parsed);
+              saveData();
+              render();
+              showToast('📂 Respaldo importado con éxito');
+            } catch (err) {
+              showToast('Archivo JSON inválido');
+            }
+          };
+          reader.readAsText(file);
+          importFile.value = '';
+        });
+
+        // Barra de formato
+        document.querySelectorAll('#formatBar [data-cmd]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            applyFormatCommand(btn.dataset.cmd);
+          });
+        });
+
+        document.querySelectorAll('#formatBar [data-forecolor]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            applyFormatCommand('foreColor', btn.dataset.forecolor);
+          });
+        });
+
+        document.querySelectorAll('#formatBar [data-hilite]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            applyFormatCommand('hiliteColor', btn.dataset.hilite);
+          });
+        });
+
+        // Controles del modal de sincronización en la nube
+        const cloudModal = document.getElementById('cloudModal');
+        const syncInput = document.getElementById('syncCodeInput');
+
+        document.getElementById('btnCloud').addEventListener('click', function () {
+          updateCloudModalInfo();
+          cloudModal.classList.add('open');
+        });
+
+        document.getElementById('closeCloudModal').addEventListener('click', function () {
+          cloudModal.classList.remove('open');
+        });
+
+        cloudModal.addEventListener('click', function (e) {
+          if (e.target === cloudModal) {
+            cloudModal.classList.remove('open');
+          }
+        });
+
+        document.getElementById('btnConnectCode').addEventListener('click', function () {
+          const clean = sanitizeSyncCode(syncInput.value);
+          if (!clean) {
+            showToast('Escribe un código válido (letras o números)');
+            return;
+          }
+          activeSyncCode = clean;
+          persistSyncCode(clean);
+          syncInput.value = clean;
+          if (db && currentUser) {
+            subscribeToCloud(true);
+            showToast('☁️ Conectada al código: ' + clean);
+          } else {
+            updateCloudModalInfo();
+            showToast('Código guardado (reintentando nube...)');
+            initCloudSync();
+          }
+        });
+
+        document.getElementById('btnCopyCode').addEventListener('click', function () {
+          const codeToCopy = sanitizeSyncCode(syncInput.value) || activeSyncCode;
+          if (!codeToCopy) {
+            showToast('Primero escribe un código de sincronización');
+            return;
+          }
+          copyTextFallback(codeToCopy);
+        });
+
+        document.getElementById('btnPrivateSpace').addEventListener('click', function () {
+          activeSyncCode = '';
+          persistSyncCode('');
+          syncInput.value = '';
+          if (db && currentUser) {
+            subscribeToCloud(true);
+            showToast('🔒 Volviste a tu espacio privado');
+          } else {
+            updateCloudModalInfo();
+          }
+        });
+
+        // Sincronización automática de medianoche para el indicador HOY
+        setInterval(function () {
+          const currentKey = toDateKey(getLocalToday());
+          if (currentKey !== lastRenderedTodayKey) {
+            render();
+          }
+        }, 60000);
+      }
+
+      // Arranque seguro al cargar el DOM
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () {
+          initControls();
+          render();
+          initCloudSync();
+        });
+      } else {
+        initControls();
+        render();
+        initCloudSync();
+      }
+    })();
+  </script>
+</body>
+</html>
