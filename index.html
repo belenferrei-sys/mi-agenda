@@ -1680,6 +1680,7 @@
           todos: {},
           reviews: {},
           habitNames: ['Tomar agua 💧', 'Leer 15 min 📖', 'Mover el cuerpo 🌿'],
+          weeklyHabits: {},
           habitChecks: {},
           notesPages: [
             {
@@ -1692,17 +1693,41 @@
         };
       }
 
+      function normalizeAgendaData(rawParsed) {
+        const defaults = getDefaultData();
+        const parsed = rawParsed && typeof rawParsed === 'object' ? rawParsed : {};
+        return Object.assign({}, defaults, parsed, {
+          habitNames: Array.isArray(parsed.habitNames) ? parsed.habitNames : defaults.habitNames,
+          weeklyHabits: parsed.weeklyHabits && typeof parsed.weeklyHabits === 'object' ? parsed.weeklyHabits : {},
+          habitChecks: parsed.habitChecks && typeof parsed.habitChecks === 'object' ? parsed.habitChecks : {},
+          notesPages: Array.isArray(parsed.notesPages) && parsed.notesPages.length ? parsed.notesPages : defaults.notesPages
+        });
+      }
+
+      function getWeekHabitList(weekKey) {
+        if (!data.weeklyHabits || typeof data.weeklyHabits !== 'object') {
+          data.weeklyHabits = {};
+        }
+        if (Array.isArray(data.weeklyHabits[weekKey])) {
+          return data.weeklyHabits[weekKey];
+        }
+        // Si esta semana aún no tiene lista propia, usa los hábitos de la semana más reciente como plantilla inicial
+        const existingKeys = Object.keys(data.weeklyHabits).filter(function (k) {
+          return k < weekKey && Array.isArray(data.weeklyHabits[k]);
+        }).sort();
+        const template = existingKeys.length
+          ? data.weeklyHabits[existingKeys[existingKeys.length - 1]]
+          : (Array.isArray(data.habitNames) ? data.habitNames : ['Tomar agua 💧', 'Leer 15 min 📖', 'Mover el cuerpo 🌿']);
+        data.weeklyHabits[weekKey] = template.slice();
+        return data.weeklyHabits[weekKey];
+      }
+
       function loadLocalData() {
         const defaults = getDefaultData();
         try {
           const raw = window.localStorage.getItem(STORAGE_KEY);
           if (!raw) return defaults;
-          const parsed = JSON.parse(raw);
-          return Object.assign({}, defaults, parsed, {
-            habitNames: Array.isArray(parsed.habitNames) ? parsed.habitNames : defaults.habitNames,
-            habitChecks: parsed.habitChecks && typeof parsed.habitChecks === 'object' ? parsed.habitChecks : {},
-            notesPages: Array.isArray(parsed.notesPages) && parsed.notesPages.length ? parsed.notesPages : defaults.notesPages
-          });
+          return normalizeAgendaData(JSON.parse(raw));
         } catch (err) {
           return defaults;
         }
@@ -1819,13 +1844,7 @@
               }
               if (remote && typeof remote.payloadJson === 'string') {
                 try {
-                  const parsed = JSON.parse(remote.payloadJson);
-                  const defaults = getDefaultData();
-                  data = Object.assign({}, defaults, parsed, {
-                    habitNames: Array.isArray(parsed.habitNames) ? parsed.habitNames : defaults.habitNames,
-                    habitChecks: parsed.habitChecks && typeof parsed.habitChecks === 'object' ? parsed.habitChecks : {},
-                    notesPages: Array.isArray(parsed.notesPages) && parsed.notesPages.length ? parsed.notesPages : defaults.notesPages
-                  });
+                  data = normalizeAgendaData(JSON.parse(remote.payloadJson));
                   saveLocalData();
                   render();
                 } catch (parseErr) {
@@ -2409,6 +2428,7 @@
         });
 
         const todayColIndex = days.findIndex(function (d) { return d.isToday; });
+        const weekHabits = getWeekHabitList(weekKey);
 
         if (!data.habitChecks[weekKey]) {
           data.habitChecks[weekKey] = {};
@@ -2427,7 +2447,7 @@
           `;
         }
 
-        const habitRowsHtml = data.habitNames.map(function (hName, hIdx) {
+        const habitRowsHtml = weekHabits.map(function (hName, hIdx) {
           const checks = data.habitChecks[weekKey][hIdx] || [false, false, false, false, false, false, false];
           return `
             <tr>
@@ -2444,7 +2464,7 @@
                 `;
               }).join('')}
               <td class="no-print">
-                <button type="button" class="text-[11px] opacity-60 hover:opacity-100 cursor-pointer bg-transparent border-0 p-0" data-habit-del="${hIdx}" title="Eliminar hábito">✕</button>
+                <button type="button" class="text-[11px] opacity-60 hover:opacity-100 cursor-pointer bg-transparent border-0 p-0" data-habit-del="${hIdx}" title="Eliminar hábito de esta semana">✕</button>
               </td>
             </tr>
           `;
@@ -2537,7 +2557,8 @@
         spread.querySelectorAll('[data-habit-name]').forEach(function (inp) {
           inp.addEventListener('input', function () {
             const idx = Number(inp.dataset.habitName);
-            data.habitNames[idx] = inp.value;
+            weekHabits[idx] = inp.value;
+            data.habitNames = weekHabits.slice();
             saveData();
           });
         });
@@ -2559,7 +2580,8 @@
         spread.querySelectorAll('[data-habit-del]').forEach(function (btn) {
           btn.addEventListener('click', function () {
             const idx = Number(btn.dataset.habitDel);
-            data.habitNames.splice(idx, 1);
+            weekHabits.splice(idx, 1);
+            data.habitNames = weekHabits.slice();
             const updated = {};
             Object.keys(data.habitChecks[weekKey]).forEach(function (k) {
               const num = Number(k);
@@ -2573,7 +2595,8 @@
         });
 
         document.getElementById('addHabitBtn').addEventListener('click', function () {
-          data.habitNames.push('Nuevo hábito ✨');
+          weekHabits.push('Nuevo hábito ✨');
+          data.habitNames = weekHabits.slice();
           saveData();
           render();
         });
@@ -2922,8 +2945,7 @@
           const reader = new FileReader();
           reader.onload = function (ev) {
             try {
-              const parsed = JSON.parse(ev.target.result);
-              data = Object.assign({}, getDefaultData(), parsed);
+              data = normalizeAgendaData(JSON.parse(ev.target.result));
               saveData();
               render();
               showToast('📂 Respaldo importado con éxito');
