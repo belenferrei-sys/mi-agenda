@@ -1447,12 +1447,18 @@
 
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
-    import { getAuth, signInAnonymously, signInWithCustomToken } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
-    import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+    import {
+      initializeAuth,
+      indexedDBLocalPersistence,
+      browserLocalPersistence,
+      inMemoryPersistence,
+      signInAnonymously,
+      signInWithCustomToken
+    } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+    import { initializeFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
 
     // =========================================================================
-    // 👇 PASO 2 DE LA GUÍA: PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE
-    // Reemplaza los valores vacíos "" con los datos que te da Firebase.
+    // CONFIGURACIÓN DE FIREBASE
     // =========================================================================
     const MI_FIREBASE_CONFIG = {
       apiKey: "AIzaSyCmCkaIdXlwg0DDY7ckT1SXfLUxfWaPbCA",
@@ -1661,7 +1667,7 @@
         return WEEKLY_QUOTES[idx];
       }
 
-      // ==================== PERSISTENCIA LOCAL + NUBE (TIEMPO REAL) ====================
+      // ==================== PERSISTENCIA LOCAL + NUBE (TIEMPO REAL + COMPATIBLE iOS/NOTION) ====================
       function getDefaultData() {
         return {
           owner: '',
@@ -1706,24 +1712,7 @@
         try {
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         } catch (err) {
-          // Modo memoria si el navegador bloquea storage en iframe
-        }
-      }
-
-      function loadSavedSyncCode() {
-        try {
-          return sanitizeSyncCode(window.localStorage.getItem(SYNC_CODE_KEY) || '');
-        } catch (err) {
-          return '';
-        }
-      }
-
-      function persistSyncCode(code) {
-        try {
-          if (code) window.localStorage.setItem(SYNC_CODE_KEY, code);
-          else window.localStorage.removeItem(SYNC_CODE_KEY);
-        } catch (err) {
-          // Ignorar si el navegador restringe storage
+          // Modo memoria si iOS/Notion bloquea storage en iframe
         }
       }
 
@@ -1737,6 +1726,30 @@
           .slice(0, 48);
       }
 
+      function loadSavedSyncCode() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const urlCode = sanitizeSyncCode(params.get('code') || '');
+          if (urlCode) return urlCode;
+        } catch (err) {
+          // Ignorar si no se puede leer la URL
+        }
+        try {
+          return sanitizeSyncCode(window.localStorage.getItem(SYNC_CODE_KEY) || '');
+        } catch (err) {
+          return '';
+        }
+      }
+
+      function persistSyncCode(code) {
+        try {
+          if (code) window.localStorage.setItem(SYNC_CODE_KEY, code);
+          else window.localStorage.removeItem(SYNC_CODE_KEY);
+        } catch (err) {
+          // Ignorar si iOS/Notion restringe storage
+        }
+      }
+
       let data = loadLocalData();
       let db = null;
       let auth = null;
@@ -1744,6 +1757,7 @@
       let activeSyncCode = loadSavedSyncCode();
       let unsubscribeSnapshot = null;
       let saveTimer = null;
+      let lastCloudError = '';
 
       function updateStatusPill(text) {
         const statusEl = document.getElementById('saveStatus');
@@ -1754,13 +1768,15 @@
         const modeEl = document.getElementById('cloudModeText');
         const uidEl = document.getElementById('cloudUserId');
         const inputEl = document.getElementById('syncCodeInput');
-        if (uidEl) uidEl.textContent = currentUser ? currentUser.uid : 'Solo guardado local';
+        if (uidEl) uidEl.textContent = currentUser ? currentUser.uid : 'Sin sesión en la nube';
         if (inputEl && document.activeElement !== inputEl) {
           inputEl.value = activeSyncCode;
         }
         if (modeEl) {
-          if (!currentUser || !db) {
-            modeEl.textContent = 'Modo local (pega tu configuración de Firebase en el archivo para activar la nube)';
+          if (lastCloudError) {
+            modeEl.textContent = '⚠️ Error de conexión: ' + lastCloudError;
+          } else if (!currentUser || !db) {
+            modeEl.textContent = 'Modo local (conectando con Firebase...)';
           } else if (activeSyncCode) {
             modeEl.textContent = `Conectada en tiempo real · Código: ${activeSyncCode}`;
           } else {
@@ -1787,12 +1803,14 @@
         const docRef = getActiveDocRef();
         if (!docRef) return;
 
+        lastCloudError = '';
         updateStatusPill('☁️ Sincronizando...');
         updateCloudModalInfo();
 
         unsubscribeSnapshot = onSnapshot(
           docRef,
           function (snap) {
+            lastCloudError = '';
             if (snap.exists()) {
               const remote = snap.data();
               if (remote && remote.lastClientId === CLIENT_ID && !isSwitchingRoom) {
@@ -1817,10 +1835,13 @@
             }
             isSwitchingRoom = false;
             updateStatusPill('☁️ Sincronizado ✓');
+            updateCloudModalInfo();
           },
-          function () {
+          function (err) {
+            lastCloudError = (err && err.code) ? err.code : 'sin-permiso';
             updateStatusPill('⚠️ Error de nube');
-            showToast('Revisa las reglas de Firestore en Firebase');
+            updateCloudModalInfo();
+            showToast('Error de nube (' + lastCloudError + ')');
           }
         );
       }
@@ -1829,7 +1850,6 @@
         try {
           let firebaseConfig = null;
 
-          // 1) Primero revisa si pegaste tu propia configuración de Firebase
           if (MI_FIREBASE_CONFIG && MI_FIREBASE_CONFIG.apiKey && MI_FIREBASE_CONFIG.projectId) {
             firebaseConfig = MI_FIREBASE_CONFIG;
           } else if (typeof __firebase_config !== 'undefined' && __firebase_config) {
@@ -1844,8 +1864,17 @@
 
           updateStatusPill('☁️ Conectando...');
           const app = initializeApp(firebaseConfig);
-          auth = getAuth(app);
-          db = getFirestore(app);
+
+          // Compatibilidad con iframes estrictos de iOS / Notion (respaldo automático en memoria)
+          auth = initializeAuth(app, {
+            persistence: [indexedDBLocalPersistence, browserLocalPersistence, inMemoryPersistence]
+          });
+
+          // Modo Long Polling sin Fetch Streams para evitar cortes en WebView de iPhone
+          db = initializeFirestore(app, {
+            experimentalForceLongPolling: true,
+            useFetchStreams: false
+          });
 
           const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
           if (initialToken && !MI_FIREBASE_CONFIG.apiKey) {
@@ -1856,10 +1885,12 @@
             currentUser = cred.user;
           }
 
+          lastCloudError = '';
           updateCloudModalInfo();
           subscribeToCloud(true);
         } catch (err) {
-          updateStatusPill('Guardado local ✓');
+          lastCloudError = (err && err.code) ? err.code : 'auth-bloqueado';
+          updateStatusPill('⚠️ Error de nube');
           updateCloudModalInfo();
         }
       }
@@ -1888,8 +1919,10 @@
               updatedAt: Date.now(),
               lastClientId: CLIENT_ID
             });
+            lastCloudError = '';
             updateStatusPill('☁️ Sincronizado ✓');
           } catch (err) {
+            lastCloudError = (err && err.code) ? err.code : 'sin-conexion';
             updateStatusPill('⚠️ Sin conexión');
           }
         }, 500);
@@ -2954,7 +2987,8 @@
             showToast('☁️ Conectada al código: ' + clean);
           } else {
             updateCloudModalInfo();
-            showToast('Código guardado (falta configurar Firebase)');
+            showToast('Código guardado (reintentando nube...)');
+            initCloudSync();
           }
         });
 
