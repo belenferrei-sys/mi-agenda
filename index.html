@@ -1476,6 +1476,7 @@
       // ==================== CONSTANTES Y CATÁLOGOS ====================
       const STORAGE_KEY = 'agenda_creativa_isadora_v2';
       const SYNC_CODE_KEY = 'agenda_creativa_sync_code_v1';
+      const DEFAULT_SYNC_CODE = 'gatitoos-mbfb-2026';
       const HABIT_DAYS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
       const CLIENT_ID = 'cli_' + Math.random().toString(36).slice(2, 10);
       const appId = typeof __app_id !== 'undefined' ? __app_id : 'mi-agenda-creativa';
@@ -1760,13 +1761,38 @@
           // Ignorar si no se puede leer la URL
         }
         try {
-          return sanitizeSyncCode(window.localStorage.getItem(SYNC_CODE_KEY) || '');
+          const hashMatch = String(window.location.hash || '').match(/code=([a-z0-9_-]+)/i);
+          if (hashMatch && hashMatch[1]) {
+            const hashCode = sanitizeSyncCode(hashMatch[1]);
+            if (hashCode) return hashCode;
+          }
         } catch (err) {
-          return '';
+          // Ignorar
         }
+        try {
+          const stored = sanitizeSyncCode(window.localStorage.getItem(SYNC_CODE_KEY) || '');
+          if (stored) return stored;
+        } catch (err) {
+          // Ignorar si iOS/Notion restringe storage
+        }
+        try {
+          if (window.name && window.name.indexOf('agenda_code:') === 0) {
+            const winCode = sanitizeSyncCode(window.name.slice('agenda_code:'.length));
+            if (winCode) return winCode;
+          }
+        } catch (err) {
+          // Ignorar
+        }
+        return sanitizeSyncCode(DEFAULT_SYNC_CODE);
       }
 
       function persistSyncCode(code) {
+        try {
+          if (code) window.name = 'agenda_code:' + code;
+          else window.name = '';
+        } catch (err) {
+          // Ignorar
+        }
         try {
           if (code) window.localStorage.setItem(SYNC_CODE_KEY, code);
           else window.localStorage.removeItem(SYNC_CODE_KEY);
@@ -1781,6 +1807,8 @@
       let currentUser = null;
       let activeSyncCode = loadSavedSyncCode();
       let unsubscribeSnapshot = null;
+      let restPollTimer = null;
+      let useRestFallback = false;
       let saveTimer = null;
       let lastCloudError = '';
 
@@ -1818,12 +1846,110 @@
         return doc(db, 'artifacts', appId, 'users', currentUser.uid, 'agenda', 'main');
       }
 
+      function getRestDocUrl() {
+        if (!MI_FIREBASE_CONFIG || !MI_FIREBASE_CONFIG.projectId || !activeSyncCode) return '';
+        const project = encodeURIComponent(MI_FIREBASE_CONFIG.projectId);
+        const key = encodeURIComponent(MI_FIREBASE_CONFIG.apiKey || '');
+        const appSeg = encodeURIComponent(appId);
+        const codeSeg = encodeURIComponent(activeSyncCode);
+        return `https://firestore.googleapis.com/v1/projects/${project}/databases/(default)/documents/artifacts/${appSeg}/public/data/shared_agendas/${codeSeg}?key=${key}`;
+      }
+
+      async function getAuthHeaders() {
+        const headers = { 'Content-Type': 'application/json' };
+        try {
+          if (currentUser && typeof currentUser.getIdToken === 'function') {
+            const token = await currentUser.getIdToken();
+            if (token) headers['Authorization'] = 'Bearer ' + token;
+          }
+        } catch (err) {
+          // Continuar sin cabecera si el WebView bloquea el token
+        }
+        return headers;
+      }
+
+      async function fetchViaRest(isInitialLoad) {
+        const url = getRestDocUrl();
+        if (!url) return false;
+        try {
+          const headers = await getAuthHeaders();
+          const res = await fetch(url, { method: 'GET', headers: headers, cache: 'no-store' });
+          if (res.status === 404) {
+            lastCloudError = '';
+            updateStatusPill('☁️ Sincronizado ✓');
+            updateCloudModalInfo();
+            return true;
+          }
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+          const json = await res.json();
+          const fields = json && json.fields;
+          const remoteClient = fields && fields.lastClientId && fields.lastClientId.stringValue;
+          const payloadStr = fields && fields.payloadJson && fields.payloadJson.stringValue;
+          if (payloadStr && (isInitialLoad || remoteClient !== CLIENT_ID)) {
+            data = normalizeAgendaData(JSON.parse(payloadStr));
+            saveLocalData();
+            render();
+          }
+          lastCloudError = '';
+          updateStatusPill('☁️ Sincronizado ✓');
+          updateCloudModalInfo();
+          return true;
+        } catch (err) {
+          lastCloudError = 'permission-denied';
+          updateStatusPill('⚠️ Error de nube');
+          updateCloudModalInfo();
+          return false;
+        }
+      }
+
+      async function writeViaRest() {
+        const url = getRestDocUrl();
+        if (!url) return false;
+        const headers = await getAuthHeaders();
+        const body = JSON.stringify({
+          fields: {
+            payloadJson: { stringValue: JSON.stringify(data) },
+            updatedAt: { integerValue: String(Date.now()) },
+            lastClientId: { stringValue: CLIENT_ID }
+          }
+        });
+        const res = await fetch(url, { method: 'PATCH', headers: headers, body: body });
+        if (!res.ok) {
+          throw new Error('HTTP ' + res.status);
+        }
+        return true;
+      }
+
+      function startRestSyncMode() {
+        useRestFallback = true;
+        if (restPollTimer) {
+          clearInterval(restPollTimer);
+          restPollTimer = null;
+        }
+        fetchViaRest(true);
+        restPollTimer = setInterval(function () {
+          fetchViaRest(false);
+        }, 6000);
+      }
+
       function subscribeToCloud(isSwitchingRoom) {
-        if (!db || !currentUser) return;
+        if (restPollTimer) {
+          clearInterval(restPollTimer);
+          restPollTimer = null;
+        }
         if (unsubscribeSnapshot) {
           unsubscribeSnapshot();
           unsubscribeSnapshot = null;
         }
+
+        if (useRestFallback && activeSyncCode) {
+          startRestSyncMode();
+          return;
+        }
+
+        if (!db || !currentUser) return;
 
         const docRef = getActiveDocRef();
         if (!docRef) return;
@@ -1857,6 +1983,10 @@
             updateCloudModalInfo();
           },
           function (err) {
+            if (activeSyncCode) {
+              startRestSyncMode();
+              return;
+            }
             lastCloudError = (err && err.code) ? err.code : 'sin-permiso';
             updateStatusPill('⚠️ Error de nube');
             updateCloudModalInfo();
@@ -1908,6 +2038,10 @@
           updateCloudModalInfo();
           subscribeToCloud(true);
         } catch (err) {
+          if (activeSyncCode) {
+            startRestSyncMode();
+            return;
+          }
           lastCloudError = (err && err.code) ? err.code : 'auth-bloqueado';
           updateStatusPill('⚠️ Error de nube');
           updateCloudModalInfo();
@@ -1917,7 +2051,7 @@
       function saveData() {
         saveLocalData();
 
-        if (!db || !currentUser) {
+        if (!useRestFallback && (!db || !currentUser)) {
           updateStatusPill('Guardando...');
           clearTimeout(saveTimer);
           saveTimer = setTimeout(function () {
@@ -1929,18 +2063,34 @@
         updateStatusPill('☁️ Guardando...');
         clearTimeout(saveTimer);
         saveTimer = setTimeout(async function () {
-          if (!db || !currentUser) return;
-          const docRef = getActiveDocRef();
-          if (!docRef) return;
           try {
-            await setDoc(docRef, {
-              payloadJson: JSON.stringify(data),
-              updatedAt: Date.now(),
-              lastClientId: CLIENT_ID
-            });
+            if (useRestFallback) {
+              await writeViaRest();
+            } else {
+              if (!db || !currentUser) return;
+              const docRef = getActiveDocRef();
+              if (!docRef) return;
+              await setDoc(docRef, {
+                payloadJson: JSON.stringify(data),
+                updatedAt: Date.now(),
+                lastClientId: CLIENT_ID
+              });
+            }
             lastCloudError = '';
             updateStatusPill('☁️ Sincronizado ✓');
           } catch (err) {
+            if (!useRestFallback && activeSyncCode) {
+              try {
+                useRestFallback = true;
+                await writeViaRest();
+                lastCloudError = '';
+                updateStatusPill('☁️ Sincronizado ✓');
+                startRestSyncMode();
+                return;
+              } catch (restErr) {
+                // Continuar al manejo de error abajo
+              }
+            }
             lastCloudError = (err && err.code) ? err.code : 'sin-conexion';
             updateStatusPill('⚠️ Sin conexión');
           }
